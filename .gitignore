@@ -1,0 +1,31 @@
+# Common build directories
+/build
+/build*
+
+# Common compiler artifacts
+*.[ao]
+*.so
+*.lo
+*.la
+*.dll
+*.lib
+*.dylib
+
+# Geany project file
+*.geany
+
+# Other commonly unwanted files
+.deps/
+.libs/
+Makefile.in
+Makefile
+/autom4te.cache/
+/aclocal.m4
+/build-aux/
+/config.*
+/configure
+/libtool
+/m4/
+/stamp-h1
+/compile_commands.json
+/misc/
