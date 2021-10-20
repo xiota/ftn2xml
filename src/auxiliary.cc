@@ -17,13 +17,10 @@
  */
 
 #include <algorithm>
-#include <regex>
-#include <string>
-#include <vector>
+#include <fstream>
+#include <iostream>
 
 #include "auxiliary.h"
-
-namespace Fountain {
 
 std::string &ltrim_inplace(std::string &s, char const *t) {
   s.erase(0, s.find_first_not_of(t));
@@ -50,11 +47,17 @@ std::string &replace_all_inplace(std::string &subject,
   return subject;
 }
 
-std::string ws_ltrim(std::string s) { return ltrim_inplace(s, " \t\n\r\f\v"); }
+std::string ws_ltrim(std::string s) {
+  return ltrim_inplace(s, FOUNTAIN_WHITESPACE);
+}
 
-std::string ws_rtrim(std::string s) { return rtrim_inplace(s, " \t\n\r\f\v"); }
+std::string ws_rtrim(std::string s) {
+  return rtrim_inplace(s, FOUNTAIN_WHITESPACE);
+}
 
-std::string ws_trim(std::string s) { return trim_inplace(s, " \t\n\r\f\v"); }
+std::string ws_trim(std::string s) {
+  return trim_inplace(s, FOUNTAIN_WHITESPACE);
+}
 
 std::string replace_all(std::string subject, const std::string &search,
                         const std::string &replace) {
@@ -105,6 +108,41 @@ std::string to_lower(std::string s) { return to_lower_inplace(s); }
 bool is_upper(std::string const &s) {
   return std::all_of(s.begin(), s.end(),
                      [](unsigned char c) { return !std::islower(c); });
+}
+
+std::string cstr_assign_free(char *input) {
+  if (input) {
+    std::string output{input};
+    free(input);
+    return output;
+  }
+  return {};
+}
+
+std::string file_get_contents(std::string const &filename) {
+  std::string content;
+  try {
+    std::ifstream instream(filename.c_str(), std::ios::in);
+    content.assign((std::istreambuf_iterator<char>(instream)),
+                   (std::istreambuf_iterator<char>()));
+    instream.close();
+  } catch (...) {
+    // do nothing;
+  }
+  return content;
+}
+
+bool file_set_contents(std::string const &filename,
+                       std::string const &contents) {
+  try {
+    std::ofstream outstream(filename.c_str(), std::ios::out);
+    copy(contents.begin(), contents.end(),
+         std::ostream_iterator<char>(outstream));
+    outstream.close();
+    return true;
+  } catch (...) {
+    return false;
+  }
 }
 
 void print_regex_error(std::regex_error &e) {
@@ -188,5 +226,3 @@ void print_regex_error(std::regex_error &e) {
       fprintf(stderr, "%d: unknown regex error\n", e.code());
   }
 }
-
-}  // namespace Fountain

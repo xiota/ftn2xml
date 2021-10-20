@@ -18,11 +18,15 @@
 
 #pragma once
 
-namespace Fountain {
+#include <string>
+#include <vector>
+#include <regex>
 
-std::string &ltrim_inplace(std::string &s, char const *t = " \t\n\r\f\v");
-std::string &rtrim_inplace(std::string &s, char const *t = " \t\n\r\f\v");
-std::string &trim_inplace(std::string &s, char const *t = " \t\n\r\f\v");
+#define FOUNTAIN_WHITESPACE " \t\n\r\f\v"
+
+std::string &ltrim_inplace(std::string &s, char const *t = FOUNTAIN_WHITESPACE);
+std::string &rtrim_inplace(std::string &s, char const *t = FOUNTAIN_WHITESPACE);
+std::string &trim_inplace(std::string &s, char const *t = FOUNTAIN_WHITESPACE);
 
 std::string &replace_all_inplace(std::string &subject,
                                  const std::string &search,
@@ -50,6 +54,10 @@ std::string to_lower(std::string s);
 
 bool is_upper(std::string const &s);
 
-void print_regex_error(std::regex_error &e);
+std::string cstr_assign_free(char *input);
+std::string file_get_contents(std::string const &filename);
 
-}  // namespace Fountain
+bool file_set_contents(std::string const &filename,
+                       std::string const &contents);
+
+void print_regex_error(std::regex_error &e);
