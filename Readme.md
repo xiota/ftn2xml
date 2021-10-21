@@ -30,7 +30,8 @@ A detailed description of standard Fountain is available at [Fountain.io](https:
 ## To do:
 
 * Add command-line interface
-* Export PDF
+* Add formatting to PDF export
+* Fix PDF export glitches
 * Fix issues with BOM (byte order markers)
 * Fix formatting when there are spaces around `*` and `_`
 
