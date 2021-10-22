@@ -41,8 +41,11 @@ The official description of standard Fountain is available at [Fountain.io](http
 ## Modified Syntax
 
 * Continuations include a line with whitespace followed by a period.  This makes continuations visible to the writer.  Some text editors strip trailing whitespace, which would destroy continuations that consist of only whitespace.  If a solo period is needed in the output, it may be escaped or formatted.
+* Formatting with `*` and `_` ignore spacing.
+  - May be useful to format text mid-word.
+  - Use escapes to if actual character is needed.
 * Multiple blank lines are collapsed into one.
-  - They can easily be forced with continuations.
+  - They can be forced with continuations if needed.
 * Notes may start with `[[` and end with a blank line.  (This is implied by the standard.)
   - Notes may start with a blank line and end with `]]`.  (So that accidental exclusion of a continuation does not let the end of a note through to the output.)
   - This modification effectively allows notes to cross blank lines.
@@ -53,15 +56,15 @@ The official description of standard Fountain is available at [Fountain.io](http
   - `\& \.`
 * Scene headings may start with `EST` (establishing).
 * Some stock transitions are recognized without forcing the transition.
-  - CUT TO BLACK:
+  - Must be shorter than 20 characters.  (Force if longer is needed.)
+  - Ends with " OUT." – FADE OUT. IRIS OUT.
+  - Starts with "CUT TO " – CUT TO BLACK.
   - DISSOLVE:
   - END CREDITS:
   - FADE IN:
-  - FADE OUT.
   - FREEZE FRAME:
   - INTERCUT WITH:
   - IRIS IN:
-  - IRIS OUT.
   - OPENING CREDITS:
   - SPLIT SCREEN:
   - STOCK SHOT:
