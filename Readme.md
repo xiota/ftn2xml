@@ -20,9 +20,11 @@ A detailed description of standard Fountain is available at [Fountain.io](https:
 ## Usage
 
 1. Compile as a library or include the files in your project.
+  - [podofo](http://podofo.sourceforge.net/) is required for pdf export
 2. Call a function to convert the script into the desired format:
 
   * `ftn2xml()` – Convert to native XML-style format.
+  * `ftn2pdf()` – Export to PDF using podofo library.
   * `ftn2fdx()` – Convert into Final Draft document.
   * `ftn2screenplain()` – Convert into HTML similar to those produced by screenplain.
   * `ftn2textplay()` – Convert into HTML similar to those produced by textplay.
@@ -30,10 +32,8 @@ A detailed description of standard Fountain is available at [Fountain.io](https:
 ## To do:
 
 * Add command-line interface
-* Add formatting to PDF export
-* Fix PDF export glitches
+* Add bold, italic, underline formatting to PDF export
 * Fix issues with BOM (byte order markers)
-* Fix formatting when there are spaces around `*` and `_`
 
 ## License
 
