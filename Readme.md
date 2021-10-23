@@ -29,12 +29,6 @@ A detailed description of standard Fountain is available at [Fountain.io](https:
   * `ftn2screenplain()` – Convert into HTML similar to those produced by screenplain.
   * `ftn2textplay()` – Convert into HTML similar to those produced by textplay.
 
-## To do:
-
-* Add command-line interface
-* Add bold, italic, underline formatting to PDF export
-* Fix issues with BOM (byte order markers)
-
 ## License
 
 This software is licensed under the [GPLv3+](License.md).
