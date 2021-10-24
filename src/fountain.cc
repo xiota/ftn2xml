@@ -137,7 +137,7 @@ bool isSceneHeader(std::string const &input) {
 
   try {
     static const std::regex re_scene_header(
-        R"(^(INT|EXT|EST|INT\.?/EXT|EXT\.?/INT|I/E)[\.\ ])",
+        R"(^(INT|EXT|EST|INT\.?/EXT|EXT\.?/INT|I/E|E/I)[\.\ ])",
         std::regex_constants::icase);
 
     if (std::regex_search(input, re_scene_header)) {
@@ -511,17 +511,17 @@ std::string ScriptNode::to_string(size_t const &flags) const {
       }
       output = "<Speech>" + value + "</Speech>\n";
       break;
-    case ScriptNodeType::ftnNotation:
-      if (flags & type) {
-        break;
-      }
-      output = "<Note>" + value + "</Note>\n";
-      break;
     case ScriptNodeType::ftnLyric:
       if (flags & type) {
         break;
       }
       output = "<Lyric>" + value + "</Lyric>\n";
+      break;
+    case ScriptNodeType::ftnNotation:
+      if (flags & type) {
+        break;
+      }
+      output = "<Note>" + value + "</Note>\n";
       break;
     case ScriptNodeType::ftnSection:
       if (flags & type) {
@@ -713,6 +713,56 @@ void Script::parseFountain(std::string const &text) {
       continue;
     }
 
+    // Parenthetical
+    if (isParenthetical(s)) {
+      if (!nodes.empty()) {
+        ScriptNodeType ct = nodes.back().type;
+        if (ct == ScriptNodeType::ftnParenthetical ||
+            ct == ScriptNodeType::ftnCharacter ||
+            ct == ScriptNodeType::ftnSpeech) {
+          new_node(ScriptNodeType::ftnParenthetical);
+          append(ws_trim(s));
+          end_node();
+          continue;
+        }
+      }
+    }
+
+    // Speech / Lyric
+    if (curr_node.type == ScriptNodeType::ftnSpeech) {
+      if (s.length() > 1 && s[0] == '~') {
+        new_node(ScriptNodeType::ftnLyric);
+        append(s.substr(1));
+        continue;
+      } else {
+        append(s);
+        continue;
+      }
+    } else if (curr_node.type == ScriptNodeType::ftnLyric) {
+      if (s.length() > 1 && s[0] == '~') {
+        append(s.substr(1));
+        continue;
+      } else {
+        new_node(ScriptNodeType::ftnSpeech);
+        append(s);
+        continue;
+      }
+    } else if (!nodes.empty()) {
+      ScriptNodeType ct = nodes.back().type;
+      if (ct == ScriptNodeType::ftnParenthetical ||
+          ct == ScriptNodeType::ftnCharacter) {
+        if (s.length() > 1 && s[0] == '~') {
+          new_node(ScriptNodeType::ftnLyric);
+          append(ws_ltrim(s.substr(1)));
+          continue;
+        } else {
+          new_node(ScriptNodeType::ftnSpeech);
+          append(s);
+          continue;
+        }
+      }
+    }
+
     // Character
     if (curr_node.type == ScriptNodeType::ftnUnknown && isCharacter(s)) {
       if (isDualDialog(s)) {
@@ -743,53 +793,12 @@ void Script::parseFountain(std::string const &text) {
       continue;
     }
 
-    // Parenthetical
-    if (isParenthetical(s)) {
-      if (!nodes.empty()) {
-        ScriptNodeType ct = nodes.back().type;
-        if (ct == ScriptNodeType::ftnParenthetical ||
-            ct == ScriptNodeType::ftnCharacter ||
-            ct == ScriptNodeType::ftnSpeech) {
-          new_node(ScriptNodeType::ftnParenthetical);
-          append(ws_trim(s));
-          end_node();
-          continue;
-        }
-      }
-    }
-
-    // Speech / Lyric
-    if (curr_node.type == ScriptNodeType::ftnSpeech && s[0] != '~') {
-      append(s);
+    // Isolated Lyric
+    if (s.length() > 1 && s[0] == '~') {
+      new_node(ScriptNodeType::ftnLyric);
+      append(ws_ltrim(s.substr(1)));
+      end_node();
       continue;
-    } else if (curr_node.type == ScriptNodeType::ftnLyric && s[0] == '~') {
-      append(s.substr(1));
-      continue;
-    } else if (curr_node.type == ScriptNodeType::ftnSpeech ||
-               curr_node.type == ScriptNodeType::ftnLyric) {
-      if (s.length() > 1 && s[0] == '~') {
-        new_node(ScriptNodeType::ftnLyric);
-        append(s.substr(1));
-        continue;
-      } else {
-        new_node(ScriptNodeType::ftnSpeech);
-        append(s);
-        continue;
-      }
-    } else if (!nodes.empty()) {
-      ScriptNodeType ct = nodes.back().type;
-      if (ct == ScriptNodeType::ftnParenthetical ||
-          ct == ScriptNodeType::ftnCharacter) {
-        if (s.length() > 1 && s[0] == '~') {
-          new_node(ScriptNodeType::ftnLyric);
-          append(s.substr(1));
-          continue;
-        } else {
-          new_node(ScriptNodeType::ftnSpeech);
-          append(s);
-          continue;
-        }
-      }
     }
 
     // Section, can only be forced
@@ -1353,19 +1362,16 @@ void pdfTextAdd(PoDoFo::PdfStreamedDocument &document,
         PoDoFo::PdfString((const PoDoFo::pdf_utf8 *)text.c_str()), eAlignment,
         PoDoFo::ePdfVerticalAlignment_Top);
     return;
-  } else if (font == "italic") {
-    PoDoFo::PdfFont *pFontCustom =
-        document.CreateFont(PODOFO_HPDF_FONT_COURIER_OBLIQUE);
-    pFontCustom->SetFontSize(24.0);
-    painter.SetFont(pFontCustom);
-    painter.DrawMultiLineText(
-        left_margin, bottom_margin, width, print_height - 12 * line,
-        PoDoFo::PdfString((const PoDoFo::pdf_utf8 *)text.c_str()), eAlignment,
-        PoDoFo::ePdfVerticalAlignment_Top);
-    return;
   }
 
-  PoDoFo::PdfFont *pFontNormal = document.CreateFont(PODOFO_HPDF_FONT_COURIER);
+  PoDoFo::PdfFont *pFontNormal = nullptr;
+  if (font == "bold" || font == "sceneheader") {
+    pFontNormal = document.CreateFont(PODOFO_HPDF_FONT_COURIER_BOLD);
+  } else if (font == "italic" || font == "lyric") {
+    pFontNormal = document.CreateFont(PODOFO_HPDF_FONT_COURIER_OBLIQUE);
+  } else {
+    pFontNormal = document.CreateFont(PODOFO_HPDF_FONT_COURIER);
+  }
 
   PoDoFo::PdfFont *pFontItalic =
       document.CreateFont(PODOFO_HPDF_FONT_COURIER_OBLIQUE);
@@ -1391,7 +1397,8 @@ void pdfTextAdd(PoDoFo::PdfStreamedDocument &document,
   split_formatting("**reset**");
 
   for (auto textLine : textLines) {
-    auto formatting = split_formatting(textLine.GetStringUtf8());
+    std::string strTextLine = ws_rtrim(textLine.GetStringUtf8());
+    auto formatting = split_formatting(strTextLine);
     std::string &strNormal = std::get<0>(formatting);
     std::string &strBold = std::get<1>(formatting);
     std::string &strItalic = std::get<2>(formatting);
@@ -1484,37 +1491,37 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
     replace_all_inplace(strText, "*", "");
     replace_all_inplace(strText, "_", "");
 
-    int line = 17 - int(2.5 * pdfTextLines(painter, strText, width_dialog));
-    pdfTextAdd(document, painter, strText, "title", line, 432, 108, 72, 648,
-               PoDoFo::ePdfAlignment_Center);
-    line += int(2.5 * pdfTextLines(painter, strText, width_dialog)) + 4;
+    int line = 18 - pdfTextLines(painter, strText, width_dialog);
+    pdfTextAdd(document, painter, "<u>" + to_upper(strText) + "</u>", "normal",
+               line, 468, 72, 72, 648, PoDoFo::ePdfAlignment_Center);
+    line += pdfTextLines(painter, strText, width_dialog) + 4;
 
     if (!script.metadata["author"].empty()) {
       if (!script.metadata["credit"].empty()) {
         strText = to_lower(script.metadata["credit"]);
         decode_entities_inplace(strText);
-        center_text_inplace(strText);
-        pdfTextAdd(document, painter, strText, "normal", line);
+        pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
+                   PoDoFo::ePdfAlignment_Center);
         line += pdfTextLines(painter, strText, width_dialog) + 1;
       } else {
-        strText = "written by";
-        center_text_inplace(strText);
-        pdfTextAdd(document, painter, strText, "normal", line);
+        strText = "Written by";
+        pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
+                   PoDoFo::ePdfAlignment_Center);
         line += 2;
       }
 
       strText = script.metadata["author"];
       decode_entities_inplace(strText);
-      center_text_inplace(strText);
-      pdfTextAdd(document, painter, strText, "normal", line);
+      pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
+                 PoDoFo::ePdfAlignment_Center);
       line += pdfTextLines(painter, strText, width_dialog) + 4;
     }
 
     if (!script.metadata["source"].empty()) {
       strText = script.metadata["source"];
       decode_entities_inplace(strText);
-      center_text_inplace(strText);
-      pdfTextAdd(document, painter, strText, "normal", line);
+      pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
+                 PoDoFo::ePdfAlignment_Center);
       line += pdfTextLines(painter, strText, width_dialog) + 1;
     }
 
@@ -1524,7 +1531,8 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
 
       int text_lines = pdfTextLines(painter, strText, width_dialog);
       line = text_lines < 3 ? 51 : 54 - text_lines;
-      pdfTextAdd(document, painter, strText, "normal", line);
+      pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
+                 PoDoFo::ePdfAlignment_Left);
     } else if (!script.metadata["copyright"].empty()) {
       strText = "Copyright " + script.metadata["copyright"];
       decode_entities_inplace(strText);
@@ -1532,7 +1540,8 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
 
       int text_lines = pdfTextLines(painter, strText, width_dialog);
       line = text_lines < 3 ? 51 : 54 - text_lines;
-      pdfTextAdd(document, painter, strText, "normal", line);
+      pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
+                 PoDoFo::ePdfAlignment_Left);
     }
 
     if (!script.metadata["notes"].empty()) {
@@ -1541,7 +1550,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
 
       int text_lines = pdfTextLines(painter, strText, width_dialog);
       line -= (text_lines + 2);
-      pdfTextAdd(document, painter, strText, "normal", line, 432, 108, 72, 648,
+      pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
                  PoDoFo::ePdfAlignment_Right);
     }
 
@@ -1629,7 +1638,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
         // TODO: Add scene numbers?
         int textLines = pdfTextLines(painter, buffer);
         if (LineNumber + gap_sceneheader <= lines_per_page) {
-          pdfTextAdd(document, painter, buffer, "normal", LineNumber);
+          pdfTextAdd(document, painter, buffer, "sceneheader", LineNumber);
           LineNumber += textLines;
         } else {
           LineNumber += gap_sceneheader;
@@ -1741,25 +1750,33 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
           outputDialogRight += buffer;
         }
       } break;
+      case ScriptNodeType::ftnLyric: {
+        if (flags & node.type) {
+          break;
+        }
+        if (dialog_state == 1) {
+          outputDialog += "<i>" + buffer + "</i>";
+        } else if (dialog_state == 2) {
+          outputDialogLeft += "<i>" + buffer + "</i>";
+        } else if (dialog_state == 3) {
+          outputDialogRight += "<i>" + buffer + "</i>";
+        } else {
+          int textLines = pdfTextLines(painter, buffer);
+          if (LineNumber + textLines <= lines_per_page) {
+            pdfTextAdd(document, painter, buffer, "lyric", LineNumber);
+            LineNumber += textLines;
+          } else {
+            LineNumber += textLines;
+            output += buffer;
+          }
+        }
+      } break;
       case ScriptNodeType::ftnNotation:
         if (flags & node.type) {
           break;
         }
         // not used for PDF
         break;
-      case ScriptNodeType::ftnLyric: {
-        if (flags & node.type) {
-          break;
-        }
-        int textLines = pdfTextLines(painter, buffer);
-        if (LineNumber + textLines <= lines_per_page) {
-          pdfTextAdd(document, painter, buffer, "italic", LineNumber);
-          LineNumber += textLines;
-        } else {
-          LineNumber += textLines;
-          output += buffer;
-        }
-      } break;
       case ScriptNodeType::ftnSection:
         if (flags & node.type) {
           break;
@@ -1829,7 +1846,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
       } else if (!output.empty()) {
         if (node.type == ScriptNodeType::ftnSceneHeader) {
           int textLines = pdfTextLines(painter, output);
-          pdfTextAdd(document, painter, output, "normal", LineNumber);
+          pdfTextAdd(document, painter, output, "sceneheader", LineNumber);
           output.clear();
           LineNumber += textLines;
         } else {
