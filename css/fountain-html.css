@@ -1,25 +1,27 @@
-/* https://www.nfi.edu/screenplay-format/ */
-/* http://www.scriptwritingsecrets.com/DualDialogue.htm */
-
+/*
+ * For more about screenplay formatting:
+ *    https://www.nfi.edu/screenplay-format/
+ *    http://www.scriptwritingsecrets.com/DualDialogue.htm
+ */
 html {
 	font-size: 8pt;
 }
 
-Action,
-ActionCenter,
-Character,
-Dialog,
-DialogDual,
-DialogLeft,
-DialogRight,
-Fountain,
-Lyric,
-Parenthetical,
-SceneHeader,
-Section,
-Speech,
-Synopsis,
-Transition
+.Action,
+.ActionCenter,
+.Character,
+.Dialog,
+.DialogDual,
+.DialogLeft,
+.DialogRight,
+.Fountain,
+.Lyric,
+.Parenthetical,
+.SceneHeader,
+.Section,
+.Speech,
+.Synopsis,
+.Transition
 {
 	margin: 0;
 	padding: 0;
@@ -29,7 +31,7 @@ Transition
 	position: relative;
 }
 
-BlankLine, Continuation {
+.BlankLine, .Continuation {
 	margin: 0;
 	padding: 0;
 	display: block;
@@ -38,34 +40,34 @@ BlankLine, Continuation {
 	position: relative;
 }
 
-Note, Unknown,
+.Note, .Unknown,
 meta, key, value {
 	display: none;
 }
 
-Action,
-ActionCenter,
-Character,
-Lyric,
-Parenthetical,
-SceneHeader,
-Section,
-Speech,
-Synopsis,
-Transition
+.Action,
+.ActionCenter,
+.Character,
+.Lyric,
+.Parenthetical,
+.SceneHeader,
+.Section,
+.Speech,
+.Synopsis,
+.Transition
 {
 	white-space: pre-wrap;
 }
 
-Character,
-SceneHeader,
-Transition
+.Character,
+.SceneHeader,
+.Transition
 {
 	text-transform: uppercase;
 }
 
-Fountain {
-	font-family: "Courier Prime", "Courier Screenplay", Courier, monospace;
+.Fountain {
+	font-family: "Courier Prime", Courier, monospace;
 	font-size: 1em;
 	line-height: 1.0;
 	text-align: left;
@@ -83,23 +85,23 @@ Fountain {
 	widows: 3;
 }
 /* Slug */
-Dialog {
+.Dialog {
 	break-inside: avoid;
 	margin-top: 1em;
 	margin-bottom: 1em;
 	width: 100%
 }
-Dialog * {
+.Dialog * {
 	margin-top: 0;
 	margin-bottom: 0;
 }
-Dialog > * {
+.Dialog > * {
 	width: 21.05em; /* 35 char */
 	margin-top: 0;
 	margin-bottom: 0;
 	margin-left: 6.05em; /* 10 char */
 }
-Dialog > Character {
+.Dialog > .Character {
 	break-after: avoid;
 	break-inside: avoid;
 	width: auto;
@@ -108,7 +110,7 @@ Dialog > Character {
 	margin-left: 13.25em; /* 22 char */
 	margin-right: 0;
 }
-Dialog > Parenthetical {
+.Dialog > .Parenthetical {
 	break-after: avoid;
 	break-before: avoid;
 	break-inside: avoid;
@@ -118,31 +120,31 @@ Dialog > Parenthetical {
 	margin-left: 9.65em; /* 16 char */
 	margin-right: 13.15em; /* 22 char */
 }
-Character + * {
+.Character + * {
 	break-before: avoid;
 	break-inside: avoid;
 	margin-top: 0;
 	margin-bottom: 0;
 }
-DualDialog {
+.DualDialog {
 	break-inside: avoid;
 	width: 100%;
 	display:block;
 	margin-top: 1em;
 	margin-bottom: 0;
 }
-DualDialog::after {
+.DualDialog::after {
   content: "";
   clear: both;
   margin-top: 0;
   margin-bottom: 0;
   display: table;
 }
-DualDialog * {
+.DualDialog * {
 	margin-top: 0;
 	margin-bottom: 0;
 }
-DualDialog Character {
+.DualDialog .Character {
 	break-after: avoid;
 	break-before: avoid;
 	break-inside: avoid;
@@ -150,7 +152,7 @@ DualDialog Character {
 	margin-bottom: 0;
 	margin-left: 5.45em; /* 9 char */
 }
-DualDialog Parenthetical {
+.DualDialog .Parenthetical {
 	break-after: avoid;
 	break-before: avoid;
 	break-inside: avoid;
@@ -158,7 +160,7 @@ DualDialog Parenthetical {
 	margin-bottom: 0;
 	margin-left: 3.55em; /* 7 char */
 }
-DualDialog > DialogLeft {
+.DualDialog > .DialogLeft {
 	display: inline;
 	float: left;
 	width: 14.95em; /* 25 char */
@@ -166,7 +168,7 @@ DualDialog > DialogLeft {
 	margin-top: 0;
 	margin-bottom: 0;
 }
-DualDialog > DialogRight {
+.DualDialog > .DialogRight {
 	display: inline;
 	float: left;
 	width: 14.95em; /* 25 char */
@@ -175,7 +177,7 @@ DualDialog > DialogRight {
 	margin-bottom: 0;
 }
 
-ActionCenter {
+.ActionCenter {
 	break-after: avoid;
 	break-inside: avoid;
 	margin-top: 0;
@@ -183,28 +185,28 @@ ActionCenter {
 	width: 100%;
 }
 
-BlankLine + ActionCenter {
+.BlankLine + .ActionCenter {
 	margin-top: 1em;
 }
 
-Action {
+.Action {
 	break-after: avoid;
 	break-inside: avoid;
 	margin-top: 1em;
 	margin-bottom: 1em;
 	width: 100%;
 }
-Action * {
+.Action * {
 	break-after: avoid;
 	break-inside: avoid;
 	margin-top: 0;
 	margin-bottom: 0;
 }
-Action + * {
+.Action + * {
 	break-before: avoid;
 	break-inside: avoid;
 }
-Transition {
+.Transition {
 	break-after: avoid;
 	break-inside: avoid;
 	margin-top: 1em;
@@ -212,17 +214,17 @@ Transition {
 	width: 100%;
 	text-align: right;
 }
-Transition * {
+.Transition * {
 	break-after: avoid;
 	break-inside: avoid;
 	margin-top: 0;
 	margin-bottom: 0;
 }
-Transition + * {
+.Transition + * {
 	break-before: avoid;
 	break-inside: avoid;
 }
-SceneHeader {
+.SceneHeader {
 	break-after: avoid;
 	break-inside: avoid;
 	font-size: 1em;
@@ -232,7 +234,7 @@ SceneHeader {
 	font-weight: bold;
 }
 
-SceneNumL {
+.SceneNumL {
 	display: block;
 	float: left;
 	margin-left: -4.25em; /* 4 char */
@@ -240,7 +242,7 @@ SceneNumL {
 	color: #707070;
 	user-select: none;
 }
-SceneNumR {
+.SceneNumR {
 	display: block;
 	float: right;
 	margin-right: 0.65em; /* 1 char */
@@ -249,21 +251,21 @@ SceneNumR {
 	user-select: none;
 }
 
-PageBreak {
+.PageBreak {
 	break-before: always;
 }
 
 /* half the time, centering will be off by 0.5 chars */
 /* would need to add an nbsp in html to fix */
-ActionCenter {
+.ActionCenter {
 	text-align: center;
 }
 
-SectionH1:before, SectionH2:before, SectionH3:before, SectionH4:before, SectionH5:before, SectionH6:before {
+.SectionH1:before, .SectionH2:before, .SectionH3:before, .SectionH4:before, .SectionH5:before, .SectionH6:before {
 	content: "◦ ";
 	margin-left: -0.667em;
 }
-SectionH1, SectionH2, SectionH3, SectionH4, SectionH5, SectionH6 {
+.SectionH1, .SectionH2, .SectionH3, .SectionH4, .SectionH5, .SectionH6 {
 	font-family: sans-serif;
 	font-size: 0.85em;
 	font-weight: normal;
@@ -273,7 +275,7 @@ SectionH1, SectionH2, SectionH3, SectionH4, SectionH5, SectionH6 {
 	border-top: dotted 1px rgb(199, 199, 199);
 	display: block;
 }
-SynopsisH1, SynopsisH2, SynopsisH3, SynopsisH4, SynopsisH5, SynopsisH6 {
+.SynopsisH1, .SynopsisH2, .SynopsisH3, .SynopsisH4, .SynopsisH5, .SynopsisH6 {
 	font-family: sans-serif;
 	font-size: 0.741em;
 	font-style: italic;
@@ -281,21 +283,21 @@ SynopsisH1, SynopsisH2, SynopsisH3, SynopsisH4, SynopsisH5, SynopsisH6 {
 	color: rgb(145, 145, 145);
 	display: block;
 }
-SectionH1, SynopsisH1 {
+.SectionH1, .SynopsisH1 {
 	margin-left: -10%;
 }
-SectionH2, SynopsisH2 {
+.SectionH2, .SynopsisH2 {
 	margin-left: -8%;
 }
-SectionH3, SynopsisH3 {
+.SectionH3, .SynopsisH3 {
 	margin-left: -6%;
 }
-SectionH4, SynopsisH4 {
+.SectionH4, .SynopsisH4 {
 	margin-left: -4%;
 }
-SectionH5, SynopsisH5 {
+.SectionH5, .SynopsisH5 {
 	margin-left: -2%;
 }
-SectionH6, SynopsisH6 {
+.SectionH6, .SynopsisH6 {
 	margin-left: 0%;
 }
