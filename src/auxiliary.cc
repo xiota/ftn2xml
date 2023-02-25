@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "auxiliary.h"
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-
-#include "auxiliary.h"
 
 std::string &ltrim_inplace(std::string &s, char const *t) {
   s.erase(0, s.find_first_not_of(t));
@@ -76,7 +76,7 @@ std::vector<std::string> split_string(std::string const &str,
   std::string::size_type prev = 0;
   while ((pos = str.find(delimiter, prev)) != std::string::npos) {
     strings.push_back(str.substr(prev, pos - prev));
-    prev = pos + 1;
+    prev = pos + delimiter.length();
   }
 
   // to get the last substring

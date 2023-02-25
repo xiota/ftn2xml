@@ -5,8 +5,8 @@ The official description of standard Fountain is available at [Fountain.io](http
 ## Standard Syntax
 
 * Any line not otherwise identified is an Action
-	- Forced actions are preceded by a `!`
-	- Actions may be centered with `> ... <`
+  - Forced actions are preceded by a `!`
+  - Actions may be centered with `> ... <`
   - Actions may have include multiple consecutive blank lines
 * Comments are surrounded by `/*` and `*/`
   - Blank lines are included
