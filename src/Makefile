@@ -1,5 +1,5 @@
 CC=g++
-#CFLAGS=-I .
+CPPFLAGS=-O3
 
 LIBS=-lpodofo
 
