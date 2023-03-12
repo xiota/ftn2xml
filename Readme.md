@@ -17,13 +17,33 @@ The main complication to this method is dual dialog.  When encountering a dual-d
 
 A detailed description of standard Fountain is available at [Fountain.io](https://fountain.io/syntax).  This processor recognizes a modified syntax, which is described at [Fountain Syntax](Fountain_Syntax.md).
 
-## Usage
+## Usage (command line)
+
+Basic command line utilities are provided:
+
+* `ftn2xml` – Convert to native XML-style format.
+* `ftn2html` – Convert to native HTML-style format.
+* `ftn2pdf` – Export to PDF using podofo library.
+* `ftn2fdx` – Convert into Final Draft document.
+
+To use:
+
+1. Build by running `make` from within the `src` directory.
+2. Move the binary and symlinks into your `PATH`.
+3. Use the binary or symlink that corresponds to the desired conversion.
+   * First argument is the fountain input file.
+   * Second argument, if present, is the output file.  Required for PDF output.
+   * If only one argument is given, output is to `stdout`.
+
+## Usage (source code)
 
 1. Compile as a library or include the files in your project.
    - [podofo](http://podofo.sourceforge.net/) is required for pdf export
-2. Call a function to convert the script into the desired format:
+2. `#include "fountain.h"`
+3. Call a function to convert the script into the desired format:
 
    * `ftn2xml()` – Convert to native XML-style format.
+   * `ftn2html()` – Convert to native HTML-style format.
    * `ftn2pdf()` – Export to PDF using podofo library.
    * `ftn2fdx()` – Convert into Final Draft document.
    * `ftn2screenplain()` – Convert into HTML similar to those produced by screenplain.
