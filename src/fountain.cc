@@ -1238,10 +1238,12 @@ std::string ftn2html(std::string const &input, std::string const &css_fn,
 
     for (int i = 1; i <= 6; i++) {
       std::string lvl = std::to_string(i);
-      replace_all_inplace(output, "<SectionH" + lvl + ">", R"(<div class="SectionH)" + lvl + R"(">)");
+      replace_all_inplace(output, "<SectionH" + lvl + ">",
+                          R"(<div class="SectionH)" + lvl + R"(">)");
       replace_all_inplace(output, "</SectionH" + lvl + ">", "</div>");
 
-      replace_all_inplace(output, "<SynopsisH" + lvl + ">", R"(<div class="SynopsisH)" + lvl + R"(">)");
+      replace_all_inplace(output, "<SynopsisH" + lvl + ">",
+                          R"(<div class="SynopsisH)" + lvl + R"(">)");
       replace_all_inplace(output, "</SynopsisH" + lvl + ">", "</div>");
     }
 
