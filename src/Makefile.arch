@@ -1,7 +1,7 @@
 CC=g++
-CPPFLAGS = -O3
+CPPFLAGS = -O3 -I "/usr/include/podofo-0.9"
 
-LIBS = -lpodofo
+LIBS = -lpodofo -L"/usr/lib/podofo-0.9"
 
 DEPS = auxiliary.h fountain.h
 
