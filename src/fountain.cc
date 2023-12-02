@@ -866,7 +866,7 @@ std::string ftn2screenplain(std::string const &input,
   std::string output{"<!DOCTYPE html>\n<html>\n<head>\n"};
 
   if (!css_fn.empty()) {
-    output += R"(<link rel="stylesheet" type="text/css" href="file://)";
+    output += R"(<link rel="stylesheet" type="text/css" href="\screenplain.css)";
     output += css_fn;
     output += "\">\n";
   }
@@ -945,7 +945,7 @@ std::string ftn2textplay(std::string const &input, std::string const &css_fn) {
   std::string output{"<!DOCTYPE html>\n<html>\n<head>\n"};
 
   if (!css_fn.empty()) {
-    output += "<link rel=\"stylesheet\" type=\"text/css\" href=\"file://";
+    output += "<link rel=\"stylesheet\" type=\"text/css\" href=\"textplay.css>";
     output += css_fn;
     output += "\">\n";
   }
@@ -1126,7 +1126,7 @@ std::string ftn2xml(std::string const &input, std::string const &css_fn,
       output += css_contents;
       output += "\n</style>\n";
     } else {
-      output += "<link rel='stylesheet' type='text/css' href='file://";
+      output += "<link rel='stylesheet' type='text/css' href=fountain-xml.css";
       output += css_fn;
       output += "'>\n";
     }
@@ -1165,7 +1165,7 @@ std::string ftn2html(std::string const &input, std::string const &css_fn,
       output += css_contents;
       output += "\n</style>\n";
     } else {
-      output += "<link rel='stylesheet' type='text/css' href='file://";
+      output += "<link rel='stylesheet' type='text/css' href='fountain-html.css'";
       output += css_fn;
       output += "'>\n";
     }
