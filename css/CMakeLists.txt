@@ -1,0 +1,11 @@
+file(GLOB CSS_FILES "*.css")
+
+install(
+  FILES ${CSS_FILES}
+  PERMISSIONS
+    OWNER_READ
+    OWNER_WRITE
+    GROUP_READ
+    WORLD_READ
+  DESTINATION "${CSS_PATH}"
+)

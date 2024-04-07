@@ -864,14 +864,22 @@ void Script::parseFountain(std::string const &text) {
 }
 
 // html similar to screenplain html output (can use the same css files)
-std::string ftn2screenplain(std::string const &input,
-                            std::string const &css_fn) {
+std::string ftn2screenplain(std::string const &input, std::string const &css_fn,
+                            bool const &embed_css) {
   std::string output{"<!DOCTYPE html>\n<html>\n<head>\n"};
 
   if (!css_fn.empty()) {
-    output += R"(<link rel="stylesheet" type="text/css" href="file://)";
-    output += css_fn;
-    output += "\">\n";
+    if (embed_css) {
+      std::string css_contents = file_get_contents(css_fn);
+
+      output += "<style type='text/css'>\n";
+      output += css_contents;
+      output += "\n</style>\n";
+    } else {
+      output += R"(<link rel="stylesheet" type="text/css" href=")";
+      output += css_fn;
+      output += "'>\n";
+    }
   }
 
   output +=
@@ -944,13 +952,22 @@ std::string ftn2screenplain(std::string const &input,
 }
 
 // html similar to textplay html output (can use the same css files)
-std::string ftn2textplay(std::string const &input, std::string const &css_fn) {
+std::string ftn2textplay(std::string const &input, std::string const &css_fn,
+                         bool const &embed_css) {
   std::string output{"<!DOCTYPE html>\n<html>\n<head>\n"};
 
   if (!css_fn.empty()) {
-    output += "<link rel=\"stylesheet\" type=\"text/css\" href=\"file://";
-    output += css_fn;
-    output += "\">\n";
+    if (embed_css) {
+      std::string css_contents = file_get_contents(css_fn);
+
+      output += "<style type='text/css'>\n";
+      output += css_contents;
+      output += "\n</style>\n";
+    } else {
+      output += R"(<link rel="stylesheet" type="text/css" href=")";
+      output += css_fn;
+      output += "'>\n";
+    }
   }
 
   output +=
@@ -1129,7 +1146,7 @@ std::string ftn2xml(std::string const &input, std::string const &css_fn,
       output += css_contents;
       output += "\n</style>\n";
     } else {
-      output += "<link rel='stylesheet' type='text/css' href='file://";
+      output += R"(<link rel="stylesheet" type="text/css" href=")";
       output += css_fn;
       output += "'>\n";
     }
@@ -1168,7 +1185,7 @@ std::string ftn2html(std::string const &input, std::string const &css_fn,
       output += css_contents;
       output += "\n</style>\n";
     } else {
-      output += "<link rel='stylesheet' type='text/css' href='file://";
+      output += R"(<link rel="stylesheet" type="text/css" href=")";
       output += css_fn;
       output += "'>\n";
     }
@@ -1566,8 +1583,7 @@ void pdfTextAdd(PoDoFo::PdfDocument &document, PoDoFo::PdfPainter &painter,
 
 }  // namespace
 
-bool ftn2pdf(std::string const &fn, std::string const &input,
-             std::string const &css_fn) {
+bool ftn2pdf(std::string const &fn, std::string const &input) {
   const int lines_per_page = 54;
   const int line_char_length = 60;
   const int width_print = 432;

@@ -19,18 +19,14 @@ A detailed description of standard Fountain is available at [Fountain.io](https:
 
 ## Usage (command line)
 
-Some basic command line utilities are provided:
+Some basic command line utilities are provided.
 
 * `ftn2xml` – Convert to native XML-style format.
 * `ftn2html` – Convert to native HTML-style format.
 * `ftn2pdf` – Export to PDF using PoDoFo library.
 * `ftn2fdx` – Convert into Final Draft document.
 
-Use the binary or symlink that corresponds to the desired conversion.
-
-* First argument is the fountain input file.
-* Second argument, if present, is the output file.  Required for PDF output.
-* If only one argument is given, output is to `stdout`.
+Usage is described in the output of the `--help` option.
 
 ## Usage (source code)
 
