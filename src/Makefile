@@ -1,19 +1,19 @@
-CC=g++
-CPPFLAGS = -O3
+CXX ?= g++
+CPP ?= -O3
 
-LIBS = -lpodofo
+LIBS ?= -lpodofo
 
 DEPS = auxiliary.h fountain.h
 
 OBJ = ftn2xml.o auxiliary.o fountain.o
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 ALL: ftn2html ftn2pdf ftn2xml ftn2fdx
 
 ftn2xml: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 ftn2pdf: ftn2xml
 	ln -sf ftn2xml ftn2pdf

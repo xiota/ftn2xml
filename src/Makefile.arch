@@ -1,19 +1,19 @@
-CC=g++
-CPPFLAGS = -O3 -I "/usr/include/podofo-0.9"
+CXX ?= g++
+CPPFLAGS ?= -O3 -I "/usr/include/podofo-0.9"
 
-LIBS = -lpodofo -L"/usr/lib/podofo-0.9"
+LIBS ?= -lpodofo -L"/usr/lib/podofo-0.9"
 
 DEPS = auxiliary.h fountain.h
 
 OBJ = ftn2xml.o auxiliary.o fountain.o
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 ALL: ftn2html ftn2pdf ftn2xml ftn2fdx
 
 ftn2xml: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 ftn2pdf: ftn2xml
 	ln -sf ftn2xml ftn2pdf
