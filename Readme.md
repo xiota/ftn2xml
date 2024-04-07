@@ -38,7 +38,6 @@ To use:
 ## Usage (source code)
 
 1. Compile as a library or include the files in your project.
-   - [PoDoFo 0.9.x](https://github.com/podofo/podofo) is required for pdf export
 2. `#include "fountain.h"`
 3. Call a function to convert the script into the desired format:
 
@@ -48,6 +47,13 @@ To use:
    * `ftn2fdx()` – Convert into Final Draft document.
    * `ftn2screenplain()` – Convert into HTML similar to those produced by screenplain.
    * `ftn2textplay()` – Convert into HTML similar to those produced by textplay.
+
+## Requirements
+
+* Compiler that supports C++17 standard.  Both `clang++` and `g++` seem to work.
+* [PoDoFo](https://github.com/podofo/podofo) for PDF export.
+   - PoDoFo 0.9.x - use commit tagged [0.0.2](https://github.com/xiota/fountain-screenplay-processor/releases/tag/v0.0.2).
+   - PoDoFo 0.10.x - requires [Courier Prime](https://quoteunquoteapps.com/courierprime/) to work around some font issues.
 
 ## License
 
