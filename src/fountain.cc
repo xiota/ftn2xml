@@ -1421,10 +1421,53 @@ std::string &center_text_inplace(std::string &text,
   return text;
 }
 
-int pdfTextLines(PoDoFo::PdfPainter &painter, std::string const &text,
-                 int const width = 432) {
-  auto lines = painter.GetMultiLineTextAsLines(width, text.c_str());
-  return lines.size();
+std::vector<std::string> wrap_text(std::string const &text, int const width) {
+  std::vector<std::string> words = split_string(ws_rtrim(text), " ");
+  std::vector<std::string> lines;
+  const int cwidth = (width * 10) / 72;
+
+  std::string ln;
+  ln.reserve(cwidth + 100);
+  int len = 0;
+
+  for (auto &w : words) {
+    if (len + w.size() > cwidth) {
+      lines.push_back(ws_rtrim(ln));
+      ln.clear();
+      len = 0;
+    }
+
+    if (len + w.size() == cwidth) {
+      ln.append(w);
+      lines.push_back(ws_rtrim(ln));
+      ln.clear();
+      len = 0;
+    } else {
+      ln.append(w);
+      ln.append(" ");
+      len += w.size() + 1;
+    }
+  }
+
+  // one more line in buffer
+  if (!ws_rtrim(ln).empty()) {
+    lines.push_back(ws_rtrim(ln));
+  }
+  return lines;
+}
+
+std::vector<std::string> pdfTextLines(std::string const &text,
+                                      int const width = 432) {
+  std::vector<std::string> temp = split_string(ws_rtrim(text), "\n");
+  std::vector<std::string> lines;
+
+  for (auto &i : temp) {
+    for (auto &j : wrap_text(i, width)) {
+      lines.push_back(j);
+    }
+  }
+
+  return lines;
 }
 
 void pdfTextAdd(PoDoFo::PdfStreamedDocument &document,
@@ -1471,13 +1514,12 @@ void pdfTextAdd(PoDoFo::PdfStreamedDocument &document,
   //       Must cast as <const PoDoFo::pdf_utf8 *>
   //       to use the right version.
 
-  auto textLines = painter.GetMultiLineTextAsLines(
-      width, PoDoFo::PdfString((const PoDoFo::pdf_utf8 *)text.c_str()));
+  std::vector<std::string> textLines = pdfTextLines(text, width);
 
   split_formatting("**reset**");
 
   for (auto textLine : textLines) {
-    std::string strTextLine = ws_rtrim(textLine.GetStringUtf8());
+    std::string strTextLine = ws_rtrim(textLine);
     auto formatting = split_formatting(strTextLine);
     std::string &strNormal = std::get<0>(formatting);
     std::string &strBold = std::get<1>(formatting);
@@ -1571,10 +1613,10 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
     replace_all_inplace(strText, "*", "");
     replace_all_inplace(strText, "_", "");
 
-    int line = 18 - pdfTextLines(painter, strText, width_dialog);
+    int line = 18 - pdfTextLines(strText, width_dialog).size();
     pdfTextAdd(document, painter, "<u>" + to_upper(strText) + "</u>", "normal",
                line, 468, 72, 72, 648, PoDoFo::ePdfAlignment_Center);
-    line += pdfTextLines(painter, strText, width_dialog) + 4;
+    line += pdfTextLines(strText, width_dialog).size() + 4;
 
     if (!script.metadata["author"].empty()) {
       if (!script.metadata["credit"].empty()) {
@@ -1582,7 +1624,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
         decode_entities_inplace(strText);
         pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
                    PoDoFo::ePdfAlignment_Center);
-        line += pdfTextLines(painter, strText, width_dialog) + 1;
+        line += pdfTextLines(strText, width_dialog).size() + 1;
       } else {
         strText = "Written by";
         pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
@@ -1594,7 +1636,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
       decode_entities_inplace(strText);
       pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
                  PoDoFo::ePdfAlignment_Center);
-      line += pdfTextLines(painter, strText, width_dialog) + 4;
+      line += pdfTextLines(strText, width_dialog).size() + 4;
     }
 
     if (!script.metadata["source"].empty()) {
@@ -1602,14 +1644,14 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
       decode_entities_inplace(strText);
       pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
                  PoDoFo::ePdfAlignment_Center);
-      line += pdfTextLines(painter, strText, width_dialog) + 1;
+      line += pdfTextLines(strText, width_dialog).size() + 1;
     }
 
     if (!script.metadata["contact"].empty()) {
       strText = script.metadata["contact"];
       decode_entities_inplace(strText);
 
-      int text_lines = pdfTextLines(painter, strText, width_dialog);
+      int text_lines = pdfTextLines(strText, width_dialog).size();
       line = text_lines < 3 ? 51 : 54 - text_lines;
       pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
                  PoDoFo::ePdfAlignment_Left);
@@ -1618,7 +1660,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
       decode_entities_inplace(strText);
       replace_all_inplace(strText, "(c)", "©");
 
-      int text_lines = pdfTextLines(painter, strText, width_dialog);
+      int text_lines = pdfTextLines(strText, width_dialog).size();
       line = text_lines < 3 ? 51 : 54 - text_lines;
       pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
                  PoDoFo::ePdfAlignment_Left);
@@ -1628,7 +1670,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
       strText = script.metadata["notes"];
       decode_entities_inplace(strText);
 
-      int text_lines = pdfTextLines(painter, strText, width_dialog);
+      int text_lines = pdfTextLines(strText, width_dialog).size();
       line -= (text_lines + 2);
       pdfTextAdd(document, painter, strText, "normal", line, 468, 72, 72, 648,
                  PoDoFo::ePdfAlignment_Right);
@@ -1672,7 +1714,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
           break;
         }
         if (dialog_state == 1) {
-          int textLines = pdfTextLines(painter, outputDialog, width_dialog);
+          int textLines = pdfTextLines(outputDialog, width_dialog).size();
           if (LineNumber + textLines <= lines_per_page) {
             pdfTextAdd(document, painter, outputDialog, "normal", LineNumber,
                        width_dialog, margin_dialog);
@@ -1686,9 +1728,9 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
           // Don't write DialogLeft without DialogRight
         } else if (dialog_state == 3) {
           int textLines_right =
-              pdfTextLines(painter, outputDialogRight, width_dialog_dual);
+              pdfTextLines(outputDialogRight, width_dialog_dual).size();
           int textLines_left =
-              pdfTextLines(painter, outputDialogLeft, width_dialog_dual);
+              pdfTextLines(outputDialogLeft, width_dialog_dual).size();
           int textLines = std::max<int>(textLines_left, textLines_right);
           if (LineNumber + textLines <= lines_per_page) {
             pdfTextAdd(document, painter, outputDialogRight, "normal",
@@ -1716,7 +1758,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
           break;
         }
         // TODO: Add scene numbers?
-        int textLines = pdfTextLines(painter, buffer);
+        int textLines = pdfTextLines(buffer).size();
         if (LineNumber + gap_sceneheader <= lines_per_page) {
           pdfTextAdd(document, painter, buffer, "sceneheader", LineNumber);
           LineNumber += textLines;
@@ -1729,7 +1771,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
         if (flags & node.type) {
           break;
         }
-        int textLines = pdfTextLines(painter, buffer);
+        int textLines = pdfTextLines(buffer).size();
         if (LineNumber + textLines <= lines_per_page) {
           pdfTextAdd(document, painter, buffer, "normal", LineNumber);
           LineNumber += textLines;
@@ -1744,7 +1786,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
         }
         center_text_inplace(buffer);
 
-        int textLines = pdfTextLines(painter, buffer);
+        int textLines = pdfTextLines(buffer).size();
         if (LineNumber + textLines <= lines_per_page) {
           pdfTextAdd(document, painter, buffer, "normal", LineNumber);
           LineNumber += textLines;
@@ -1760,7 +1802,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
         buffer =
             std::string(line_char_length - buffer.length() + 1, ' ') + buffer;
 
-        int textLines = pdfTextLines(painter, buffer);
+        int textLines = pdfTextLines(buffer).size();
         if (LineNumber + gap_transition <= lines_per_page) {
           pdfTextAdd(document, painter, buffer, "normal", LineNumber);
           LineNumber += textLines;
@@ -1841,7 +1883,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
         } else if (dialog_state == 3) {
           outputDialogRight += "<i>" + buffer + "</i>";
         } else {
-          int textLines = pdfTextLines(painter, buffer);
+          int textLines = pdfTextLines(buffer).size();
           if (LineNumber + textLines <= lines_per_page) {
             pdfTextAdd(document, painter, buffer, "lyric", LineNumber);
             LineNumber += textLines;
@@ -1899,7 +1941,7 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
 
       // Add overflow from previous page
       if (dialog_state == 1 && !outputDialog.empty()) {
-        int textLines = pdfTextLines(painter, outputDialog, width_dialog);
+        int textLines = pdfTextLines(outputDialog, width_dialog).size();
         pdfTextAdd(document, painter, outputDialog, "normal", LineNumber,
                    width_dialog, margin_dialog);
         outputDialog.clear();
@@ -1910,9 +1952,9 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
       } else if (dialog_state == 3 &&
                  (!outputDialogLeft.empty() || !outputDialogRight.empty())) {
         int textLines_left =
-            pdfTextLines(painter, outputDialogLeft, width_dialog_dual);
+            pdfTextLines(outputDialogLeft, width_dialog_dual).size();
         int textLines_right =
-            pdfTextLines(painter, outputDialogRight, width_dialog_dual);
+            pdfTextLines(outputDialogRight, width_dialog_dual).size();
         int textLines = std::max<int>(textLines_left, textLines_right);
 
         pdfTextAdd(document, painter, outputDialogLeft, "normal", LineNumber,
@@ -1925,12 +1967,12 @@ bool ftn2pdf(std::string const &fn, std::string const &input,
         LineNumber += textLines + 1;
       } else if (!output.empty()) {
         if (node.type == ScriptNodeType::ftnSceneHeader) {
-          int textLines = pdfTextLines(painter, output);
+          int textLines = pdfTextLines(output).size();
           pdfTextAdd(document, painter, output, "sceneheader", LineNumber);
           output.clear();
           LineNumber += textLines;
         } else {
-          int textLines = pdfTextLines(painter, output);
+          int textLines = pdfTextLines(output).size();
           pdfTextAdd(document, painter, output, "normal", LineNumber);
           output.clear();
           LineNumber += textLines;
