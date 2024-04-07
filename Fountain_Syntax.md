@@ -21,6 +21,7 @@ The official description of standard Fountain is available at [Fountain.io](http
 * Characters are in all upper case.
   - They may be forced with `@`
   - There may be a same-line parenthetical.
+  - Trailing `^` indicates simultaneous or dual dialog.
 * Dialog speech follows Character or Parenthetical.
 * Parentheticals follow Character or Speech.  They are surrounded with `(` and `)`.
 * Bold text is indicated with `**`
