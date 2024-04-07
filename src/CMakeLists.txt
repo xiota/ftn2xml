@@ -8,7 +8,7 @@ target_link_libraries(ftn2xml fountain podofo)
 
 target_include_directories(
   ftn2xml PUBLIC
-  "${PROJECT_BINARY_DIR}"
+  "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
 install(

@@ -48,6 +48,7 @@ Use the binary or symlink that corresponds to the desired conversion.
 ## Requirements
 
 * Compiler that supports C++17 standard.  Both `clang++` and `g++` seem to work.
+* [CLI11](https://github.com/CLIUtils/CLI11) for option parsing.
 * [PoDoFo](https://github.com/podofo/podofo) for PDF export.
    - PoDoFo 0.9.x - use commit tagged [0.0.2](releases/tag/v0.0.2).
    - PoDoFo 0.10.x - requires [Courier Prime](https://quoteunquoteapps.com/courierprime/) to work around some font issues.

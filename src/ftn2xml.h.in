@@ -1,2 +1,2 @@
 
-#define FTN2XML_VERSION @VERSION@
+#define VERSION "@VERSION@"
