@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12...3.45)
 
-project(ftn2xml VERSION 0.1.0)
+project(ftn2xml VERSION 0.1.1)
 
 # Output directories.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")

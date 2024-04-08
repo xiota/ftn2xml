@@ -1,7 +1,7 @@
-VERSION ?= 0.1.0
+VERSION ?= 0.1.1
 
 CXX ?= g++
-CPP ?= -O3
+CXXFLAGS ?= -O3
 
 LIBS ?= -lpodofo
 
