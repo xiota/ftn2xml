@@ -1,5 +1,3 @@
-#include "ftn2xml.h"
-
 #include <stdio.h>
 
 #include <CLI/CLI.hpp>
@@ -7,6 +5,7 @@
 #include <string>
 
 #include "auxiliary.h"
+#include "cmake.h"
 #include "fountain.h"
 
 int main(int argc, char** argv) {
@@ -31,12 +30,15 @@ int main(int argc, char** argv) {
   std::string type;
   std::string css_fn;
   std::map<std::string_view, std::string_view> css_list{
+#if ENABLE_EXPORT_PDF
       {"pdf", ""},
+#endif
       {"html", "fountain-html.css"},
       {"fdx", ""},
       {"screenplain", "screenplain.css"},
       {"textplay", "textplay.css"},
-      {"xml", "fountain-xml.css"}};
+      {"xml", "fountain-xml.css"},
+  };
 
   type = "xml";  // default
   for (auto const& [key, val] : css_list) {
@@ -98,10 +100,13 @@ int main(int argc, char** argv) {
 
   // execute desired action
   std::string output;
+#if ENABLE_EXPORT_PDF
   if (type == "pdf") {
     Fountain::ftn2pdf(output_file, input);
     return 0;
-  } else if (type == "html") {
+  } else
+#endif
+      if (type == "html") {
     output = Fountain::ftn2html(
         input, rtrim_inplace(css_path, "/") + "/" + css_fn, css_embed);
   } else if (type == "fdx") {

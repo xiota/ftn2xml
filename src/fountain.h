@@ -22,9 +22,11 @@
 #include <string>
 #include <vector>
 
+#include "config.h"
+
 namespace Fountain {
 
-enum ScriptNodeType : size_t {
+enum ScriptNodeType : int {
   ftnNone = 0,
   ftnUnknown = 1ull,
   ftnKeyValue = 1ull << 1,
@@ -49,7 +51,7 @@ enum ScriptNodeType : size_t {
 
 class ScriptNode {
  public:
-  std::string to_string(size_t const &flags = ScriptNodeType::ftnNone) const;
+  std::string to_string(int const &flags = ScriptNodeType::ftnNone) const;
 
   void clear() {
     type = ScriptNodeType::ftnUnknown;
@@ -74,7 +76,7 @@ class Script {
   }
 
   void parseFountain(std::string const &text);
-  std::string to_string(size_t const &flags = ScriptNodeType::ftnNone) const;
+  std::string to_string(int const &flags = ScriptNodeType::ftnNone) const;
 
  public:
   std::vector<ScriptNode> nodes;
@@ -126,6 +128,8 @@ std::string ftn2html(std::string const &input,
                      std::string const &css_fn = "fountain-html.css",
                      bool const &embed_css = false);
 
+#if ENABLE_EXPORT_PDF
 bool ftn2pdf(std::string const &fn, std::string const &input);
+#endif  // ENABLE_EXPORT_PDF
 
 }  // namespace Fountain
