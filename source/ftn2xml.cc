@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 
 #include <CLI/CLI.hpp>
@@ -5,7 +6,7 @@
 #include <string>
 
 #include "auxiliary.h"
-#include "cmake.h"
+#include "config.h"
 #include "fountain.h"
 
 int main(int argc, char** argv) {

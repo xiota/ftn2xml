@@ -20,13 +20,12 @@ A detailed description of standard Fountain is available at [Fountain.io](https:
 ## Usage (command line)
 
 Some basic command line utilities are provided.
+More details are contained in the `--help` output.
 
 * `ftn2xml` – Convert to native XML-style format.
 * `ftn2html` – Convert to native HTML-style format.
 * `ftn2pdf` – Export to PDF using PoDoFo library.
 * `ftn2fdx` – Convert into Final Draft document.
-
-Usage is described in the output of the `--help` option.
 
 ## Usage (source code)
 
@@ -46,18 +45,20 @@ Usage is described in the output of the `--help` option.
 * Compiler that supports C++17 standard.  Both `clang++` and `g++` seem to work.
 * [CLI11](https://github.com/CLIUtils/CLI11) for option parsing.
 * [PoDoFo](https://github.com/podofo/podofo) for PDF export.
-   - PoDoFo 0.9.x - use the branch [0.0.2](tree/v0.0.x).
+   - PoDoFo 0.9.x - use the branch [0.0.0-podofo-0.9.x](tree/0.0.0-podofo-0.9.x).
    - PoDoFo 0.10.x - requires [Courier Prime](https://quoteunquoteapps.com/courierprime/) to work around some font issues.
 
 ## Building
 
+This project uses `meson` build scripts with a `make` wrapper for convenience.
+
 ```bash
 git clone https://github.com/xiota/ftn2xml
-cmake -B build -S ftn2xml -DCMAKE_INSTALL_PREFIX=/usr
-cmake --build build
-DESTDIR=output cmake --install
+cd ftn2xml
+make all
 ```
 
+The files will be located in a folder named `pkgdir` for review.  Moving the main `ftn2xml` executable into the `PATH` should be sufficient for use.  System-wide installation is possible with `make sysinstall`.  Removal is possible with `make uninstall`, but not really recommended.
 
 ## License
 
