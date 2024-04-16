@@ -13,7 +13,7 @@ doc_readme = 'Readme.md'
 doc_syntax = 'Fountain_Syntax.md'
 
 pdf_export = get_option('pdf_export')
-if pdf_export.allowed()
+if not pdf_export.disabled()
   podofo = dependency('libpodofo', version: ['>=0.10.0','<0.11.0'], required: pdf_export)
 else
   podofo = disabler()
