@@ -9,7 +9,7 @@
 #include "config.h"
 #include "fountain.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   auto cmd = std::string{argv[0]};
   cmd = cmd.substr(cmd.find_last_of("/\\") + 1);
 
@@ -30,19 +30,17 @@ int main(int argc, char** argv) {
   // option output type
   std::string type;
   std::string css_fn;
-  std::map<std::string_view, std::string_view> css_list{
+  std::map<std::string_view, std::string_view> css_list {
 #if ENABLE_EXPORT_PDF
-      {"pdf", ""},
+    {"pdf", ""},
 #endif
-      {"html", "fountain-html.css"},
-      {"fdx", ""},
-      {"screenplain", "screenplain.css"},
-      {"textplay", "textplay.css"},
-      {"xml", "fountain-xml.css"},
+        {"html", "fountain-html.css"}, {"fdx", ""},
+        {"screenplain", "screenplain.css"}, {"textplay", "textplay.css"},
+        {"xml", "fountain-xml.css"},
   };
 
   type = "xml";  // default
-  for (auto const& [key, val] : css_list) {
+  for (const auto &[key, val] : css_list) {
     if (cmd.find(key) != std::string::npos) {
       type = key;
       css_fn = val;
@@ -83,14 +81,14 @@ int main(int argc, char** argv) {
   // parse options
   try {
     app.parse(argc, argv);
-  } catch (const CLI::ParseError& e) {
+  } catch (const CLI::ParseError &e) {
     return app.exit(e);
   }
 
   // list output types and exit
   if (list_types) {
     std::cout << "output types:" << std::endl;
-    for (auto const& [key, val] : css_list) {
+    for (const auto &[key, val] : css_list) {
       std::cout << "   " << key << std::endl;
     }
     return 0;
