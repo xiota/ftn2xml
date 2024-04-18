@@ -1,13 +1,12 @@
-
 #include <stdio.h>
 
 #include <CLI/CLI.hpp>
 #include <fstream>
 #include <string>
 
-#include "auxiliary.h"
+#include "auxiliary.hxx"
 #include "config.h"
-#include "fountain.h"
+#include "fountain.hxx"
 
 int main(int argc, char **argv) {
   auto cmd = std::string{argv[0]};

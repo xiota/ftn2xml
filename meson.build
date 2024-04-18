@@ -36,9 +36,9 @@ executable(
   meson.project_name(),
   sources: [
     config_h,
-    'source/auxiliary.cc',
-    'source/fountain.cc',
-    'source/ftn2xml.cc',
+    'source/auxiliary.cxx',
+    'source/fountain.cxx',
+    'source/ftn2xml.cxx',
   ],
   dependencies: [podofo],
   name_prefix: '',
