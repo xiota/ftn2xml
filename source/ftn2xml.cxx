@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright 2021-2024 xiota
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #include <stdio.h>
 
 #include <CLI/CLI.hpp>
