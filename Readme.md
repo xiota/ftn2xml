@@ -45,20 +45,27 @@ More details are contained in the `--help` output.
 * Compiler that supports C++17 standard.  Both `clang++` and `g++` seem to work.
 * [CLI11](https://github.com/CLIUtils/CLI11) for option parsing.
 * [PoDoFo](https://github.com/podofo/podofo) for PDF export.
-   - PoDoFo 0.9.x - use the branch [0.0.0-podofo-0.9.x](tree/0.0.0-podofo-0.9.x).
-   - PoDoFo 0.10.x - requires [Courier Prime](https://quoteunquoteapps.com/courierprime/) to work around some font issues.
+* [Courier Prime](https://quoteunquoteapps.com/courierprime/) to work around PoDoFo 0.10.x font issues.
 
 ## Building
 
 This project uses `meson` build scripts with a `make` wrapper for convenience.
 
 ```bash
-git clone https://github.com/xiota/ftn2xml
+git clone https://github.com/xiota/ftn2xml.git
 cd ftn2xml
-make all
+make
 ```
 
-The files will be located in a folder named `pkgdir` for review.  Moving the main `ftn2xml` executable into the `PATH` should be sufficient for use.  System-wide installation is possible with `make sysinstall`.  Removal is possible with `make uninstall`, but not really recommended.
+# Installing
+
+The makefile contains an install target.
+
+```bash
+make install
+```
+
+To uninstall, delete the files and folders listed in `build/meson-logs/install-log.txt`.
 
 ## License
 
