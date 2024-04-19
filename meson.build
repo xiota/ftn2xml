@@ -14,7 +14,7 @@ doc_syntax = 'Fountain_Syntax.md'
 
 pdf_export = get_option('pdf_export')
 if not pdf_export.disabled()
-  podofo = dependency('libpodofo', version: ['>=0.10.0','<0.11.0'], required: pdf_export)
+  podofo = dependency('libpodofo', required: pdf_export)
 else
   podofo = disabler()
 endif
@@ -23,7 +23,7 @@ conf_data = configuration_data()
 conf_data.set('version', meson.project_version())
 
 conf_data.set('prefix', prefix)
-conf_data.set('project_data', project_datadir)
+conf_data.set('project_datadir', project_datadir)
 conf_data.set10('pdf_export', podofo.found())
 
 config_h = configure_file(
@@ -46,24 +46,26 @@ executable(
   install_dir: get_option('bindir'),
 )
 
-install_symlink(
-  'ftn2fdx',
-  install_dir: get_option('bindir'),
-  pointing_to: meson.project_name(),
-)
-
-install_symlink(
-  'ftn2html',
-  install_dir: get_option('bindir'),
-  pointing_to: meson.project_name(),
-)
-
-if (podofo.found())
+if meson.version().version_compare('>=0.61.0')
   install_symlink(
-    'ftn2pdf',
+    'ftn2fdx',
     install_dir: get_option('bindir'),
     pointing_to: meson.project_name(),
   )
+
+  install_symlink(
+    'ftn2html',
+    install_dir: get_option('bindir'),
+    pointing_to: meson.project_name(),
+  )
+
+  if (podofo.found())
+    install_symlink(
+      'ftn2pdf',
+      install_dir: get_option('bindir'),
+      pointing_to: meson.project_name(),
+    )
+  endif
 endif
 
 install_data(
