@@ -19,6 +19,8 @@ else
   podofo = disabler()
 endif
 
+cli11_dep = dependency('CLI11')
+
 conf_data = configuration_data()
 conf_data.set('version', meson.project_version())
 
@@ -40,7 +42,7 @@ executable(
     'source/fountain.cxx',
     'source/ftn2xml.cxx',
   ],
-  dependencies: [podofo],
+  dependencies: [cli11_dep, podofo],
   name_prefix: '',
   install: true,
   install_dir: get_option('bindir'),
