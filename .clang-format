@@ -1,13 +1,27 @@
 BasedOnStyle: Google
 AlignAfterOpenBracket: BlockIndent
-AlignArrayOfStructures: Left
+AlignArrayOfStructures: None
+AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortFunctionsOnASingleLine: Empty
-BinPackArguments: true
-BinPackParameters: true
+BinPackArguments: false
+BinPackParameters: false
 ColumnLimit: 96
+CommentPragmas: '^SPDX'
+Cpp11BracedListStyle: false
 DerivePointerAlignment: false
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex: '^".*"'
+    Priority: 1
+  - Regex: '^<.*>$'
+    Priority: 2
+IndentPPDirectives: AfterHash
+IndentWidth: 2
 InsertBraces: true
 InsertNewlineAtEOF: true
-PointerAlignment: Middle
+PointerAlignment: Right
 QualifierAlignment: Left
 ReferenceAlignment: Pointer
+SortIncludes: true
+SpaceBeforeParens: ControlStatements
+SpacesInAngles: false

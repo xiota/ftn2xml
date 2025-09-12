@@ -40,7 +40,7 @@ enum ScriptNodeType : unsigned long long {
 
 class ScriptNode {
  public:
-  std::string to_string(const int & flags = ScriptNodeType::ftnNone) const;
+  std::string to_string(const int &flags = ScriptNodeType::ftnNone) const;
 
   void clear() {
     type = ScriptNodeType::ftnUnknown;
@@ -57,7 +57,7 @@ class ScriptNode {
 class Script {
  public:
   Script() = default;
-  Script(const std::string & text) {
+  Script(const std::string &text) {
     parseFountain(text);
   }
 
@@ -66,8 +66,8 @@ class Script {
     curr_node.clear();
   }
 
-  void parseFountain(const std::string & text);
-  std::string to_string(const int & flags = ScriptNodeType::ftnNone) const;
+  void parseFountain(const std::string &text);
+  std::string to_string(const int &flags = ScriptNodeType::ftnNone) const;
 
  public:
   std::vector<ScriptNode> nodes;
@@ -76,13 +76,15 @@ class Script {
  private:
   ScriptNode curr_node;
 
-  std::string parseNodeText(const std::string & input);
+  std::string parseNodeText(const std::string &input);
 
   void new_node(
-      const ScriptNodeType & type, const std::string & key = "", const std::string & value = ""
+      const ScriptNodeType &type,
+      const std::string &key = "",
+      const std::string &value = ""
   ) {
     end_node();
-    curr_node = {type, key, value};
+    curr_node = { type, key, value };
   }
   void end_node() {
     if (curr_node.type != ScriptNodeType::ftnUnknown) {
@@ -91,7 +93,7 @@ class Script {
       curr_node.clear();
     }
   }
-  void append(const std::string & s) {
+  void append(const std::string &s) {
     if (curr_node.value.size()) {
       curr_node.value += '\n';
     }
@@ -101,31 +103,35 @@ class Script {
 
 // html output compatible with screenplain css files
 std::string ftn2screenplain(
-    const std::string & input, const std::string & css_fn = "screenplain.css",
-    const bool & embed_css = false
+    const std::string &input,
+    const std::string &css_fn = "screenplain.css",
+    const bool &embed_css = false
 );
 
 // html output compatible with textplay css files
 std::string ftn2textplay(
-    const std::string & input, const std::string & css_fn = "textplay.css",
-    const bool & embed_css = false
+    const std::string &input,
+    const std::string &css_fn = "textplay.css",
+    const bool &embed_css = false
 );
 
 // possibly compatible with finaldraft fdx files
-std::string ftn2fdx(const std::string & input);
+std::string ftn2fdx(const std::string &input);
 
 // native output; modern browsers can display with css
 std::string ftn2xml(
-    const std::string & input, const std::string & css_fn = "fountain-xml.css",
-    const bool & embed_css = false
+    const std::string &input,
+    const std::string &css_fn = "fountain-xml.css",
+    const bool &embed_css = false
 );
 std::string ftn2html(
-    const std::string & input, const std::string & css_fn = "fountain-html.css",
-    const bool & embed_css = false
+    const std::string &input,
+    const std::string &css_fn = "fountain-html.css",
+    const bool &embed_css = false
 );
 
 #if ENABLE_EXPORT_PDF
-bool ftn2pdf(const std::string & fn, const std::string & input);
+bool ftn2pdf(const std::string &fn, const std::string &input);
 #endif  // ENABLE_EXPORT_PDF
 
 }  // namespace Fountain
