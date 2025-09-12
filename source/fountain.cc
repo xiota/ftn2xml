@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "fountain.hxx"
+#include "fountain.h"
 
 #include <cstring>
 
-#include "auxiliary.hxx"
+#include "auxiliary.h"
 
 namespace Fountain {
 
 namespace {
 
-bool isForced(const std::string & input) {
+bool isForced(const std::string &input) {
   if (input.empty()) {
     return false;
   }
@@ -35,7 +35,7 @@ bool isForced(const std::string & input) {
   return false;
 }
 
-bool isTransition(const std::string & input) {
+bool isTransition(const std::string &input) {
   if (input.empty()) {
     return false;
   }
@@ -84,10 +84,10 @@ bool isTransition(const std::string & input) {
   }
 
   // Other transitions
-  const char * transitions[] = {
-      "DISSOLVE:",      "END CREDITS:", "FADE IN:",         "FREEZE FRAME:",
-      "INTERCUT WITH:", "IRIS IN:",     "OPENING CREDITS:", "SPLIT SCREEN:",
-      "STOCK SHOT:",    "TIME CUT:",    "TITLE OVER:",      "WIPE:",
+  const char *transitions[] = {
+    "DISSOLVE:",      "END CREDITS:", "FADE IN:",         "FREEZE FRAME:",
+    "INTERCUT WITH:", "IRIS IN:",     "OPENING CREDITS:", "SPLIT SCREEN:",
+    "STOCK SHOT:",    "TIME CUT:",    "TITLE OVER:",      "WIPE:",
   };
 
   for (auto str : transitions) {
@@ -99,7 +99,7 @@ bool isTransition(const std::string & input) {
   return false;
 }
 
-std::string parseTransition(const std::string & input) {
+std::string parseTransition(const std::string &input) {
   if (input.empty()) {
     return {};
   }
@@ -109,7 +109,7 @@ std::string parseTransition(const std::string & input) {
   return to_upper(ws_trim(input));
 }
 
-bool isSceneHeader(const std::string & input) {
+bool isSceneHeader(const std::string &input) {
   if (input.length() < 2) {
     return false;
   }
@@ -130,7 +130,7 @@ bool isSceneHeader(const std::string & input) {
     if (std::regex_search(input, re_scene_header)) {
       return true;
     }
-  } catch (std::regex_error & e) {
+  } catch (std::regex_error &e) {
     print_regex_error(e, __FILE__, __LINE__);
   }
   return false;
@@ -138,10 +138,10 @@ bool isSceneHeader(const std::string & input) {
 
 // returns <scene description, scene number>
 // Note: in should already be length checked by isSceneHeader()
-auto parseSceneHeader(const std::string & input) {
+auto parseSceneHeader(const std::string &input) {
   std::string first;
   std::string second;
-  bool forced_scene{false};
+  bool forced_scene{ false };
 
   if (input[0] == '.' && input[1] != '.') {
     forced_scene = true;
@@ -163,7 +163,7 @@ auto parseSceneHeader(const std::string & input) {
   return std::make_pair(first, second);
 }
 
-bool isCenter(const std::string & input) {
+bool isCenter(const std::string &input) {
   if (input.length() < 2) {
     return false;
   }
@@ -179,7 +179,7 @@ bool isCenter(const std::string & input) {
   return false;
 }
 
-bool isNotation(const std::string & input) {
+bool isNotation(const std::string &input) {
   if (input.length() < 4) {
     return false;
   }
@@ -190,7 +190,7 @@ bool isNotation(const std::string & input) {
   }
 
   // check if right-trimmed to avoid copying string
-  static const std::string strWhiteSpace{FOUNTAIN_WHITESPACE};
+  static const std::string strWhiteSpace{ FOUNTAIN_WHITESPACE };
   if (strWhiteSpace.find(input.back()) != std::string::npos) {
     std::string s = ws_rtrim(input);
     const std::size_t len = s.length();
@@ -207,7 +207,7 @@ bool isNotation(const std::string & input) {
   return false;
 }
 
-bool isCharacter(const std::string & input) {
+bool isCharacter(const std::string &input) {
   if (input.empty()) {
     return false;
   }
@@ -238,7 +238,7 @@ bool isCharacter(const std::string & input) {
 }
 
 // Note: input should already be length checked by isCharacter()
-std::string parseCharacter(const std::string & input) {
+std::string parseCharacter(const std::string &input) {
   // Note: input should already be left-trimmed,
   // otherwise indent would be removed here
 
@@ -258,7 +258,7 @@ std::string parseCharacter(const std::string & input) {
 }
 
 // Note: input should already be length checked by isCharacter()
-bool isDualDialog(const std::string & input) {
+bool isDualDialog(const std::string &input) {
   if (input.back() == '^') {
     return true;
   }
@@ -266,7 +266,7 @@ bool isDualDialog(const std::string & input) {
   return false;
 }
 
-bool isParenthetical(const std::string & input) {
+bool isParenthetical(const std::string &input) {
   if (!input.length()) {
     return false;
   }
@@ -277,7 +277,7 @@ bool isParenthetical(const std::string & input) {
   }
 
   // check if right-trimmed to avoid copying string
-  static std::string strWhiteSpace{FOUNTAIN_WHITESPACE};
+  static std::string strWhiteSpace{ FOUNTAIN_WHITESPACE };
   if (strWhiteSpace.find(input.back()) != std::string::npos) {
     std::string s = ws_rtrim(input);
     const std::size_t len = s.length();
@@ -293,7 +293,7 @@ bool isParenthetical(const std::string & input) {
   return false;
 }
 
-bool isContinuation(const std::string & input) {
+bool isContinuation(const std::string &input) {
   if (input.empty()) {
     return false;
   }
@@ -304,7 +304,7 @@ bool isContinuation(const std::string & input) {
   return false;
 }
 
-auto parseKeyValue(const std::string & input) {
+auto parseKeyValue(const std::string &input) {
   std::string key;
   std::string value;
 
@@ -319,7 +319,7 @@ auto parseKeyValue(const std::string & input) {
 }
 
 // replace escape sequences with entities in a single pass
-std::string & parseEscapeSequences_inplace(std::string & input) {
+std::string &parseEscapeSequences_inplace(std::string &input) {
   for (std::size_t pos = 0; pos < input.length();) {
     switch (input[pos]) {
       case '\t':
@@ -387,7 +387,7 @@ std::string & parseEscapeSequences_inplace(std::string & input) {
 
 }  // namespace
 
-std::string ScriptNode::to_string(const int & flags) const {
+std::string ScriptNode::to_string(const int &flags) const {
   static int dialog_state = 0;
   std::string output;
 
@@ -531,8 +531,8 @@ std::string ScriptNode::to_string(const int & flags) const {
   return output;
 }
 
-std::string Script::to_string(const int & flags) const {
-  std::string output{"<Fountain>\n"};
+std::string Script::to_string(const int &flags) const {
+  std::string output{ "<Fountain>\n" };
 
   for (auto node : nodes) {
     output += node.to_string(flags);
@@ -542,7 +542,7 @@ std::string Script::to_string(const int & flags) const {
   return output;
 }
 
-std::string Script::parseNodeText(const std::string & input) {
+std::string Script::parseNodeText(const std::string &input) {
   try {
     static const std::regex re_bolditalic(R"(\*{3}([^*]+?)\*{3})");
     static const std::regex re_bold(R"(\*{2}([^*]+?)\*{2})");
@@ -561,13 +561,13 @@ std::string Script::parseNodeText(const std::string & input) {
     output = std::regex_replace(output, re_note_3, "<note>$1</note>");
 
     return output;
-  } catch (std::regex_error & e) {
+  } catch (std::regex_error &e) {
     print_regex_error(e, __FILE__, __LINE__);
     return input;
   }
 }
 
-void Script::parseFountain(const std::string & text) {
+void Script::parseFountain(const std::string &text) {
   clear();
 
   if (!text.length()) {
@@ -587,7 +587,7 @@ void Script::parseFountain(const std::string & text) {
     parseEscapeSequences_inplace(strTmp);
 
     lines = split_lines(strTmp);
-  } catch (std::regex_error & e) {
+  } catch (std::regex_error &e) {
     print_regex_error(e, __FILE__, __LINE__);
   }
 
@@ -599,7 +599,7 @@ void Script::parseFountain(const std::string & text) {
     if (std::regex_search(text, re_has_header)) {
       has_header = true;
     }
-  } catch (std::regex_error & e) {
+  } catch (std::regex_error &e) {
     print_regex_error(e, __FILE__, __LINE__);
   }
 
@@ -607,7 +607,7 @@ void Script::parseFountain(const std::string & text) {
   int currSection = 1;
 
   // process line-by-line
-  for (auto & line : lines) {
+  for (auto &line : lines) {
     std::string s = ws_ltrim(line);
 
     if (has_header) {
@@ -843,10 +843,9 @@ void Script::parseFountain(const std::string & text) {
 }
 
 // html similar to screenplain html output (can use the same css files)
-std::string ftn2screenplain(
-    const std::string & input, const std::string & css_fn, const bool & embed_css
-) {
-  std::string output{"<!DOCTYPE html>\n<html>\n<head>\n"};
+std::string
+ftn2screenplain(const std::string &input, const std::string &css_fn, const bool &embed_css) {
+  std::string output{ "<!DOCTYPE html>\n<html>\n<head>\n" };
 
   if (!css_fn.empty()) {
     if (embed_css) {
@@ -924,7 +923,7 @@ std::string ftn2screenplain(
 
     static const std::regex re_newlines(R"(\n+)");
     output = std::regex_replace(output, re_newlines, "\n");
-  } catch (std::regex_error & e) {
+  } catch (std::regex_error &e) {
     print_regex_error(e, __FILE__, __LINE__);
   }
 
@@ -932,10 +931,9 @@ std::string ftn2screenplain(
 }
 
 // html similar to textplay html output (can use the same css files)
-std::string ftn2textplay(
-    const std::string & input, const std::string & css_fn, const bool & embed_css
-) {
-  std::string output{"<!DOCTYPE html>\n<html>\n<head>\n"};
+std::string
+ftn2textplay(const std::string &input, const std::string &css_fn, const bool &embed_css) {
+  std::string output{ "<!DOCTYPE html>\n<html>\n<head>\n" };
 
   if (!css_fn.empty()) {
     if (embed_css) {
@@ -1018,15 +1016,15 @@ std::string ftn2textplay(
     //   <h5 class="goldman-slugline"></h5>
     //   <span class="revised"></span>
 
-  } catch (std::regex_error & e) {
+  } catch (std::regex_error &e) {
     print_regex_error(e, __FILE__, __LINE__);
   }
 
   return output;
 }
 
-std::string ftn2fdx(const std::string & input) {
-  std::string output{R"(<?xml version="1.0" encoding="UTF-8" standalone="no" ?>)"};
+std::string ftn2fdx(const std::string &input) {
+  std::string output{ R"(<?xml version="1.0" encoding="UTF-8" standalone="no" ?>)" };
   output += '\n';
   output += R"(<FinalDraft DocumentType="Script" Template="No" Version="1">)";
   output += "\n<Content>\n";
@@ -1098,17 +1096,16 @@ std::string ftn2fdx(const std::string & input) {
 
     static const std::regex re_newlines(R"(\n+)");
     output = std::regex_replace(output, re_newlines, "\n");
-  } catch (std::regex_error & e) {
+  } catch (std::regex_error &e) {
     print_regex_error(e, __FILE__, __LINE__);
   }
 
   return output;
 }
 
-std::string ftn2xml(
-    const std::string & input, const std::string & css_fn, const bool & embed_css
-) {
-  std::string output{"<!DOCTYPE html>\n<html>\n<head>\n"};
+std::string
+ftn2xml(const std::string &input, const std::string &css_fn, const bool &embed_css) {
+  std::string output{ "<!DOCTYPE html>\n<html>\n<head>\n" };
 
   if (!css_fn.empty()) {
     if (embed_css) {
@@ -1139,17 +1136,16 @@ std::string ftn2xml(
   try {
     static const std::regex re_newlines(R"(\n+)");
     output = std::regex_replace(output, re_newlines, "\n");
-  } catch (std::regex_error & e) {
+  } catch (std::regex_error &e) {
     print_regex_error(e, __FILE__, __LINE__);
   }
 
   return output;
 }
 
-std::string ftn2html(
-    const std::string & input, const std::string & css_fn, const bool & embed_css
-) {
-  std::string output{"<!DOCTYPE html>\n<html>\n<head>\n"};
+std::string
+ftn2html(const std::string &input, const std::string &css_fn, const bool &embed_css) {
+  std::string output{ "<!DOCTYPE html>\n<html>\n<head>\n" };
   if (!css_fn.empty()) {
     if (embed_css) {
       std::string css_contents = file_get_contents(css_fn);
@@ -1242,7 +1238,7 @@ std::string ftn2html(
 
     static const std::regex re_newlines(R"(\n+)");
     output = std::regex_replace(output, re_newlines, "\n");
-  } catch (std::regex_error & e) {
+  } catch (std::regex_error &e) {
     print_regex_error(e, __FILE__, __LINE__);
   }
 
@@ -1253,12 +1249,12 @@ std::string ftn2html(
 
 #if ENABLE_EXPORT_PDF
 
-#include <podofo/podofo.h>
+#  include <podofo/podofo.h>
 
-#if (PODOFO_VERSION_MINOR < 10) && (PODOFO_VERSION_MAJOR < 1)
-#include "pdf-export-0.9.hxx"
-#else
-#include "pdf-export-0.10.hxx"
-#endif
+#  if (PODOFO_VERSION_MINOR < 10) && (PODOFO_VERSION_MAJOR < 1)
+#    include "pdf-export-0.9.inc"
+#  else
+#    include "pdf-export-0.10.inc"
+#  endif
 
 #endif  // ENABLE_EXPORT_PDF

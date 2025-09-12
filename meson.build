@@ -27,8 +27,8 @@ config_h = configure_file(
 
 core_sources = [
   config_h,
-  'source/auxiliary.cxx',
-  'source/fountain.cxx',
+  'source/auxiliary.cc',
+  'source/fountain.cc',
 ]
 
 # Static library
@@ -62,7 +62,7 @@ endif
 if get_option('cli')
   exe = executable(
     meson.project_name(),
-    sources: ['source/ftn2xml.cxx'],
+    sources: ['source/ftn2xml.cc'],
     dependencies: [cli11_dep, podofo],
     link_with: fountain_lib,
     install: true

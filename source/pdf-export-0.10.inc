@@ -12,9 +12,15 @@ namespace {  // PDF export - using PoDoFo 0.10.x
 #define PODOFO_RAISE_ERROR(code) throw ::PoDoFo::PdfError(code, __FILE__, __LINE__)
 
 void add_char(
-    const std::string & strAdd, std::string & strNormal, std::string & strBold,
-    std::string & strItalic, std::string & strBoldItalic, std::string & strUnderline,
-    const bool & bBold, const bool & bItalic, const bool & bUnderline
+    const std::string &strAdd,
+    std::string &strNormal,
+    std::string &strBold,
+    std::string &strItalic,
+    std::string &strBoldItalic,
+    std::string &strUnderline,
+    const bool &bBold,
+    const bool &bItalic,
+    const bool &bUnderline
 ) {
   if (bBold && bItalic) {
     strBoldItalic.append(strAdd);
@@ -45,10 +51,10 @@ void add_char(
   }
 }
 
-auto split_formatting(const std::string & input) {
-  static bool bBold{false};
-  static bool bItalic{false};
-  static bool bUnderline{false};
+auto split_formatting(const std::string &input) {
+  static bool bBold{ false };
+  static bool bItalic{ false };
+  static bool bUnderline{ false };
 
   std::string strNormal;
   std::string strBold;
@@ -74,8 +80,15 @@ auto split_formatting(const std::string & input) {
                 pos += 2;
               } else {
                 add_char(
-                    input.substr(pos, 2), strNormal, strBold, strItalic, strBoldItalic,
-                    strUnderline, bBold, bItalic, bUnderline
+                    input.substr(pos, 2),
+                    strNormal,
+                    strBold,
+                    strItalic,
+                    strBoldItalic,
+                    strUnderline,
+                    bBold,
+                    bItalic,
+                    bUnderline
                 );
                 ++pos;
               }
@@ -86,8 +99,15 @@ auto split_formatting(const std::string & input) {
                 pos += 2;
               } else {
                 add_char(
-                    input.substr(pos, 2), strNormal, strBold, strItalic, strBoldItalic,
-                    strUnderline, bBold, bItalic, bUnderline
+                    input.substr(pos, 2),
+                    strNormal,
+                    strBold,
+                    strItalic,
+                    strBoldItalic,
+                    strUnderline,
+                    bBold,
+                    bItalic,
+                    bUnderline
                 );
                 ++pos;
               }
@@ -98,8 +118,15 @@ auto split_formatting(const std::string & input) {
                 pos += 2;
               } else {
                 add_char(
-                    input.substr(pos, 2), strNormal, strBold, strItalic, strBoldItalic,
-                    strUnderline, bBold, bItalic, bUnderline
+                    input.substr(pos, 2),
+                    strNormal,
+                    strBold,
+                    strItalic,
+                    strBoldItalic,
+                    strUnderline,
+                    bBold,
+                    bItalic,
+                    bUnderline
                 );
                 ++pos;
               }
@@ -113,8 +140,15 @@ auto split_formatting(const std::string & input) {
                       pos += 3;
                     } else {
                       add_char(
-                          input.substr(pos, 3), strNormal, strBold, strItalic, strBoldItalic,
-                          strUnderline, bBold, bItalic, bUnderline
+                          input.substr(pos, 3),
+                          strNormal,
+                          strBold,
+                          strItalic,
+                          strBoldItalic,
+                          strUnderline,
+                          bBold,
+                          bItalic,
+                          bUnderline
                       );
                       pos += 2;
                     }
@@ -125,8 +159,15 @@ auto split_formatting(const std::string & input) {
                       pos += 3;
                     } else {
                       add_char(
-                          input.substr(pos, 3), strNormal, strBold, strItalic, strBoldItalic,
-                          strUnderline, bBold, bItalic, bUnderline
+                          input.substr(pos, 3),
+                          strNormal,
+                          strBold,
+                          strItalic,
+                          strBoldItalic,
+                          strUnderline,
+                          bBold,
+                          bItalic,
+                          bUnderline
                       );
                       pos += 2;
                     }
@@ -137,16 +178,30 @@ auto split_formatting(const std::string & input) {
                       pos += 3;
                     } else {
                       add_char(
-                          input.substr(pos, 3), strNormal, strBold, strItalic, strBoldItalic,
-                          strUnderline, bBold, bItalic, bUnderline
+                          input.substr(pos, 3),
+                          strNormal,
+                          strBold,
+                          strItalic,
+                          strBoldItalic,
+                          strUnderline,
+                          bBold,
+                          bItalic,
+                          bUnderline
                       );
                       pos += 2;
                     }
                     break;
                   default:
                     add_char(
-                        input.substr(pos, 3), strNormal, strBold, strItalic, strBoldItalic,
-                        strUnderline, bBold, bItalic, bUnderline
+                        input.substr(pos, 3),
+                        strNormal,
+                        strBold,
+                        strItalic,
+                        strBoldItalic,
+                        strUnderline,
+                        bBold,
+                        bItalic,
+                        bUnderline
                     );
                     pos += 2;
                     break;
@@ -155,23 +210,44 @@ auto split_formatting(const std::string & input) {
               break;
             default:
               add_char(
-                  input.substr(pos, 2), strNormal, strBold, strItalic, strBoldItalic,
-                  strUnderline, bBold, bItalic, bUnderline
+                  input.substr(pos, 2),
+                  strNormal,
+                  strBold,
+                  strItalic,
+                  strBoldItalic,
+                  strUnderline,
+                  bBold,
+                  bItalic,
+                  bUnderline
               );
               ++pos;
               break;
           }
         } else {
           add_char(
-              std::string{input[pos]}, strNormal, strBold, strItalic, strBoldItalic,
-              strUnderline, bBold, bItalic, bUnderline
+              std::string{ input[pos] },
+              strNormal,
+              strBold,
+              strItalic,
+              strBoldItalic,
+              strUnderline,
+              bBold,
+              bItalic,
+              bUnderline
           );
         }
         break;
       default:
         add_char(
-            std::string{input[pos]}, strNormal, strBold, strItalic, strBoldItalic, strUnderline,
-            bBold, bItalic, bUnderline
+            std::string{ input[pos] },
+            strNormal,
+            strBold,
+            strItalic,
+            strBoldItalic,
+            strUnderline,
+            bBold,
+            bItalic,
+            bUnderline
         );
         break;
     }
@@ -180,12 +256,12 @@ auto split_formatting(const std::string & input) {
   return std::make_tuple(strNormal, strBold, strItalic, strBoldItalic, strUnderline);
 }
 
-std::string & center_text_inplace(std::string & text, const int line_length = 60) {
+std::string &center_text_inplace(std::string &text, const int line_length = 60) {
   text = std::string(int((line_length - text.length() + 1) / 2.), ' ') + text;
   return text;
 }
 
-std::vector<std::string> wrap_text(const std::string & text, const int width) {
+std::vector<std::string> wrap_text(const std::string &text, const int width) {
   std::vector<std::string> words = split_string(ws_rtrim(text), " ");
   std::vector<std::string> lines;
   const std::size_t cwidth = (width * 10) / 72;
@@ -194,7 +270,7 @@ std::vector<std::string> wrap_text(const std::string & text, const int width) {
   ln.reserve(cwidth + 100);
   std::size_t len = 0;
 
-  for (auto & w : words) {
+  for (auto &w : words) {
     if (len + w.size() > cwidth) {
       lines.push_back(ws_rtrim(ln));
       ln.clear();
@@ -220,12 +296,12 @@ std::vector<std::string> wrap_text(const std::string & text, const int width) {
   return lines;
 }
 
-std::vector<std::string> pdfTextLines(const std::string & text, const int width = 432) {
+std::vector<std::string> pdfTextLines(const std::string &text, const int width = 432) {
   std::vector<std::string> temp = split_string(ws_rtrim(text), "\n");
   std::vector<std::string> lines;
 
-  for (auto & i : temp) {
-    for (auto & j : wrap_text(i, width)) {
+  for (auto &i : temp) {
+    for (auto &j : wrap_text(i, width)) {
       lines.push_back(j);
     }
   }
@@ -234,9 +310,15 @@ std::vector<std::string> pdfTextLines(const std::string & text, const int width 
 }
 
 void pdfTextAdd(
-    PoDoFo::PdfDocument & document, PoDoFo::PdfPainter & painter, const std::string & text,
-    const std::string & font, int line, const int width = 432, const int left_margin = 108,
-    const int bottom_margin = 72, const int print_height = 648,
+    PoDoFo::PdfDocument &document,
+    PoDoFo::PdfPainter &painter,
+    const std::string &text,
+    const std::string &font,
+    int line,
+    const int width = 432,
+    const int left_margin = 108,
+    const int bottom_margin = 72,
+    const int print_height = 648,
     const PoDoFo::PdfHorizontalAlignment horizontalAlignment =
         PoDoFo::PdfHorizontalAlignment::Left
 ) {
@@ -250,7 +332,7 @@ void pdfTextAdd(
   fontSearchParams.MatchBehavior = PoDoFo::PdfFontMatchBehaviorFlags::NormalizePattern;
 
   if (font == "title") {
-    PoDoFo::PdfFont * pFontCustom =
+    PoDoFo::PdfFont *pFontCustom =
         document.GetFonts().SearchFont("Alegreya SC Medium", fontSearchParams);
 
     if (pFontCustom == nullptr) {
@@ -265,7 +347,7 @@ void pdfTextAdd(
     return;
   }
 
-  PoDoFo::PdfFont * pFontNormal = nullptr;
+  PoDoFo::PdfFont *pFontNormal = nullptr;
   if (font == "bold" || font == "sceneheader") {
     pFontNormal = document.GetFonts().SearchFont("Courier Prime Bold", fontSearchParams);
   } else if (font == "italic" || font == "lyric") {
@@ -274,13 +356,13 @@ void pdfTextAdd(
     pFontNormal = document.GetFonts().SearchFont("Courier Prime", fontSearchParams);
   }
 
-  PoDoFo::PdfFont * pFontItalic =
+  PoDoFo::PdfFont *pFontItalic =
       document.GetFonts().SearchFont("Courier Prime Italic", fontSearchParams);
 
-  PoDoFo::PdfFont * pFontBold =
+  PoDoFo::PdfFont *pFontBold =
       document.GetFonts().SearchFont("Courier Prime Bold", fontSearchParams);
 
-  PoDoFo::PdfFont * pFontBoldItalic =
+  PoDoFo::PdfFont *pFontBoldItalic =
       document.GetFonts().SearchFont("Courier Prime Bold Italic", fontSearchParams);
 
   std::vector<std::string> textLines = pdfTextLines(text, width);
@@ -290,11 +372,11 @@ void pdfTextAdd(
   for (auto textLine : textLines) {
     std::string strTextLine = ws_rtrim(textLine);
     auto formatting = split_formatting(strTextLine);
-    std::string & strNormal = std::get<0>(formatting);
-    std::string & strBold = std::get<1>(formatting);
-    std::string & strItalic = std::get<2>(formatting);
-    std::string & strBoldItalic = std::get<3>(formatting);
-    std::string & strUnderline = std::get<4>(formatting);
+    std::string &strNormal = std::get<0>(formatting);
+    std::string &strBold = std::get<1>(formatting);
+    std::string &strItalic = std::get<2>(formatting);
+    std::string &strBoldItalic = std::get<3>(formatting);
+    std::string &strUnderline = std::get<4>(formatting);
 
     painter.TextState.SetFont(*pFontNormal, 12);
     painter.DrawTextMultiLine(
@@ -326,7 +408,7 @@ void pdfTextAdd(
 
 }  // namespace
 
-bool ftn2pdf(const std::string & fn, const std::string & input) {
+bool ftn2pdf(const std::string &fn, const std::string &input) {
   const int lines_per_page = 54;
   const int line_char_length = 60;
   const int width_print = 432;
@@ -350,10 +432,10 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
 
   // PDF page size
   PoDoFo::Rect pdf_size = PoDoFo::PdfPage::CreateStandardPageSize(PoDoFo::PdfPageSize::Letter);
-  PoDoFo::PdfPage * pdf_page = &pdf_document.GetPages().CreatePage(pdf_size);
+  PoDoFo::PdfPage *pdf_page = &pdf_document.GetPages().CreatePage(pdf_size);
 
   // PDF font
-  PoDoFo::PdfFont * pdf_font = pdf_document.GetFonts().SearchFont("Courier Prime");
+  PoDoFo::PdfFont *pdf_font = pdf_document.GetFonts().SearchFont("Courier Prime");
 
   PoDoFo::PdfPainter pdf_painter;
   pdf_painter.SetCanvas(*pdf_page);
@@ -375,8 +457,16 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
 
     int line = 18 - pdfTextLines(strText, width_dialog).size();
     pdfTextAdd(
-        pdf_document, pdf_painter, "<u>" + to_upper(strText) + "</u>", "normal", line, 468, 72,
-        72, 648, PoDoFo::PdfHorizontalAlignment::Center
+        pdf_document,
+        pdf_painter,
+        "<u>" + to_upper(strText) + "</u>",
+        "normal",
+        line,
+        468,
+        72,
+        72,
+        648,
+        PoDoFo::PdfHorizontalAlignment::Center
     );
     line += pdfTextLines(strText, width_dialog).size() + 4;
 
@@ -385,14 +475,30 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
         strText = to_lower(script.metadata["credit"]);
         decode_entities_inplace(strText);
         pdfTextAdd(
-            pdf_document, pdf_painter, strText, "normal", line, 468, 72, 72, 648,
+            pdf_document,
+            pdf_painter,
+            strText,
+            "normal",
+            line,
+            468,
+            72,
+            72,
+            648,
             PoDoFo::PdfHorizontalAlignment::Center
         );
         line += pdfTextLines(strText, width_dialog).size() + 1;
       } else {
         strText = "Written by";
         pdfTextAdd(
-            pdf_document, pdf_painter, strText, "normal", line, 468, 72, 72, 648,
+            pdf_document,
+            pdf_painter,
+            strText,
+            "normal",
+            line,
+            468,
+            72,
+            72,
+            648,
             PoDoFo::PdfHorizontalAlignment::Center
         );
         line += 2;
@@ -401,7 +507,15 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
       strText = script.metadata["author"];
       decode_entities_inplace(strText);
       pdfTextAdd(
-          pdf_document, pdf_painter, strText, "normal", line, 468, 72, 72, 648,
+          pdf_document,
+          pdf_painter,
+          strText,
+          "normal",
+          line,
+          468,
+          72,
+          72,
+          648,
           PoDoFo::PdfHorizontalAlignment::Center
       );
       line += pdfTextLines(strText, width_dialog).size() + 4;
@@ -411,7 +525,15 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
       strText = script.metadata["source"];
       decode_entities_inplace(strText);
       pdfTextAdd(
-          pdf_document, pdf_painter, strText, "normal", line, 468, 72, 72, 648,
+          pdf_document,
+          pdf_painter,
+          strText,
+          "normal",
+          line,
+          468,
+          72,
+          72,
+          648,
           PoDoFo::PdfHorizontalAlignment::Center
       );
       line += pdfTextLines(strText, width_dialog).size() + 1;
@@ -424,7 +546,15 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
       int text_lines = pdfTextLines(strText, width_dialog).size();
       line = text_lines < 3 ? 51 : 54 - text_lines;
       pdfTextAdd(
-          pdf_document, pdf_painter, strText, "normal", line, 468, 72, 72, 648,
+          pdf_document,
+          pdf_painter,
+          strText,
+          "normal",
+          line,
+          468,
+          72,
+          72,
+          648,
           PoDoFo::PdfHorizontalAlignment::Left
       );
     } else if (!script.metadata["copyright"].empty()) {
@@ -435,7 +565,15 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
       int text_lines = pdfTextLines(strText, width_dialog).size();
       line = text_lines < 3 ? 51 : 54 - text_lines;
       pdfTextAdd(
-          pdf_document, pdf_painter, strText, "normal", line, 468, 72, 72, 648,
+          pdf_document,
+          pdf_painter,
+          strText,
+          "normal",
+          line,
+          468,
+          72,
+          72,
+          648,
           PoDoFo::PdfHorizontalAlignment::Left
       );
     }
@@ -447,7 +585,15 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
       int text_lines = pdfTextLines(strText, width_dialog).size();
       line -= (text_lines + 2);
       pdfTextAdd(
-          pdf_document, pdf_painter, strText, "normal", line, 468, 72, 72, 648,
+          pdf_document,
+          pdf_painter,
+          strText,
+          "normal",
+          line,
+          468,
+          72,
+          72,
+          648,
           PoDoFo::PdfHorizontalAlignment::Right
       );
     }
@@ -489,7 +635,12 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
           int textLines = pdfTextLines(outputDialog, width_dialog).size();
           if (LineNumber + textLines <= lines_per_page) {
             pdfTextAdd(
-                pdf_document, pdf_painter, outputDialog, "normal", LineNumber, width_dialog,
+                pdf_document,
+                pdf_painter,
+                outputDialog,
+                "normal",
+                LineNumber,
+                width_dialog,
                 margin_dialog
             );
             outputDialog.clear();
@@ -506,12 +657,22 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
           int textLines = std::max<int>(textLines_left, textLines_right);
           if (LineNumber + textLines <= lines_per_page) {
             pdfTextAdd(
-                pdf_document, pdf_painter, outputDialogRight, "normal", LineNumber,
-                width_dialog_dual, margin_dialog_right
+                pdf_document,
+                pdf_painter,
+                outputDialogRight,
+                "normal",
+                LineNumber,
+                width_dialog_dual,
+                margin_dialog_right
             );
             pdfTextAdd(
-                pdf_document, pdf_painter, outputDialogLeft, "normal", LineNumber,
-                width_dialog_dual, margin_dialog_left
+                pdf_document,
+                pdf_painter,
+                outputDialogLeft,
+                "normal",
+                LineNumber,
+                width_dialog_dual,
+                margin_dialog_left
             );
             outputDialogLeft.clear();
             outputDialogRight.clear();
@@ -714,7 +875,12 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
       if (dialog_state == 1 && !outputDialog.empty()) {
         int textLines = pdfTextLines(outputDialog, width_dialog).size();
         pdfTextAdd(
-            pdf_document, pdf_painter, outputDialog, "normal", LineNumber, width_dialog,
+            pdf_document,
+            pdf_painter,
+            outputDialog,
+            "normal",
+            LineNumber,
+            width_dialog,
             margin_dialog
         );
         outputDialog.clear();
@@ -722,18 +888,29 @@ bool ftn2pdf(const std::string & fn, const std::string & input) {
         LineNumber += textLines + 1;
       } else if (dialog_state == 2) {
         // Don't write DialogLeft without DialogRight
-      } else if (dialog_state == 3 && (!outputDialogLeft.empty() || !outputDialogRight.empty())) {
+      } else if (dialog_state == 3 &&
+                 (!outputDialogLeft.empty() || !outputDialogRight.empty())) {
         int textLines_left = pdfTextLines(outputDialogLeft, width_dialog_dual).size();
         int textLines_right = pdfTextLines(outputDialogRight, width_dialog_dual).size();
         int textLines = std::max<int>(textLines_left, textLines_right);
 
         pdfTextAdd(
-            pdf_document, pdf_painter, outputDialogLeft, "normal", LineNumber,
-            width_dialog_dual, margin_dialog_left
+            pdf_document,
+            pdf_painter,
+            outputDialogLeft,
+            "normal",
+            LineNumber,
+            width_dialog_dual,
+            margin_dialog_left
         );
         pdfTextAdd(
-            pdf_document, pdf_painter, outputDialogRight, "normal", LineNumber,
-            width_dialog_dual, margin_dialog_right
+            pdf_document,
+            pdf_painter,
+            outputDialogRight,
+            "normal",
+            LineNumber,
+            width_dialog_dual,
+            margin_dialog_right
         );
         outputDialogLeft.clear();
         outputDialogRight.clear();
