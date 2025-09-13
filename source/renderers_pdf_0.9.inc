@@ -1,15 +1,11 @@
-/*
- * SPDX-FileCopyrightText: Copyright 2021-2024 xiota
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: Copyright 2021-2024 xiota
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
 
 namespace Fountain {
 
-namespace {  // PDF export - using PoDoFo 0.10.x
-
-#define PODOFO_RAISE_ERROR(code) throw ::PoDoFo::PdfError(code, __FILE__, __LINE__)
+namespace {  // PDF export - using PoDoFo 0.9.x
 
 void add_char(
     const std::string &strAdd,
@@ -310,7 +306,7 @@ std::vector<std::string> pdfTextLines(const std::string &text, const int width =
 }
 
 void pdfTextAdd(
-    PoDoFo::PdfDocument &document,
+    PoDoFo::PdfStreamedDocument &document,
     PoDoFo::PdfPainter &painter,
     const std::string &text,
     const std::string &font,
@@ -319,51 +315,47 @@ void pdfTextAdd(
     const int left_margin = 108,
     const int bottom_margin = 72,
     const int print_height = 648,
-    const PoDoFo::PdfHorizontalAlignment horizontalAlignment =
-        PoDoFo::PdfHorizontalAlignment::Left
+    PoDoFo::EPdfAlignment eAlignment = PoDoFo::ePdfAlignment_Left
 ) {
-  // set alignment parameters
-  PoDoFo::PdfDrawTextMultiLineParams drawParams;
-  drawParams.HorizontalAlignment = horizontalAlignment;
-  drawParams.VerticalAlignment = PoDoFo::PdfVerticalAlignment::Top;
-
-  // set font search parameters, needed for bold, italic, etc
-  PoDoFo::PdfFontSearchParams fontSearchParams;
-  fontSearchParams.MatchBehavior = PoDoFo::PdfFontMatchBehaviorFlags::NormalizePattern;
-
   if (font == "title") {
-    PoDoFo::PdfFont *pFontCustom =
-        document.GetFonts().SearchFont("Alegreya SC Medium", fontSearchParams);
-
-    if (pFontCustom == nullptr) {
-      PODOFO_RAISE_ERROR(PoDoFo::PdfErrorCode::InvalidHandle);
-    }
-
-    painter.TextState.SetFont(*pFontCustom, 24);
-
-    painter.DrawTextMultiLine(
-        text, left_margin, bottom_margin, width, print_height - 12 * line, drawParams
+    PoDoFo::PdfFont *pFontCustom = document.CreateFont("Alegreya SC Medium");
+    pFontCustom->SetFontSize(24.0);
+    painter.SetFont(pFontCustom);
+    painter.DrawMultiLineText(
+        left_margin,
+        bottom_margin,
+        width,
+        print_height - 12 * line,
+        PoDoFo::PdfString((const PoDoFo::pdf_utf8 *)text.c_str()),
+        eAlignment,
+        PoDoFo::ePdfVerticalAlignment_Top
     );
     return;
   }
 
   PoDoFo::PdfFont *pFontNormal = nullptr;
   if (font == "bold" || font == "sceneheader") {
-    pFontNormal = document.GetFonts().SearchFont("Courier Prime Bold", fontSearchParams);
+    pFontNormal = document.CreateFont(PODOFO_HPDF_FONT_COURIER_BOLD);
   } else if (font == "italic" || font == "lyric") {
-    pFontNormal = document.GetFonts().SearchFont("Courier Prime Italic", fontSearchParams);
+    pFontNormal = document.CreateFont(PODOFO_HPDF_FONT_COURIER_OBLIQUE);
   } else {
-    pFontNormal = document.GetFonts().SearchFont("Courier Prime", fontSearchParams);
+    pFontNormal = document.CreateFont(PODOFO_HPDF_FONT_COURIER);
   }
 
-  PoDoFo::PdfFont *pFontItalic =
-      document.GetFonts().SearchFont("Courier Prime Italic", fontSearchParams);
+  PoDoFo::PdfFont *pFontItalic = document.CreateFont(PODOFO_HPDF_FONT_COURIER_OBLIQUE);
 
-  PoDoFo::PdfFont *pFontBold =
-      document.GetFonts().SearchFont("Courier Prime Bold", fontSearchParams);
+  PoDoFo::PdfFont *pFontBold = document.CreateFont(PODOFO_HPDF_FONT_COURIER_BOLD);
 
-  PoDoFo::PdfFont *pFontBoldItalic =
-      document.GetFonts().SearchFont("Courier Prime Bold Italic", fontSearchParams);
+  PoDoFo::PdfFont *pFontBoldItalic = document.CreateFont(PODOFO_HPDF_FONT_COURIER_BOLD_OBLIQUE);
+
+  pFontNormal->SetFontSize(12.0);
+  pFontItalic->SetFontSize(12.0);
+  pFontBold->SetFontSize(12.0);
+  pFontBoldItalic->SetFontSize(12.0);
+
+  // Note: PoDoFo::PdfString is heavily overloaded.
+  //       Must cast as <const PoDoFo::pdf_utf8 *>
+  //       to use the right version.
 
   std::vector<std::string> textLines = pdfTextLines(text, width);
 
@@ -378,28 +370,59 @@ void pdfTextAdd(
     std::string &strBoldItalic = std::get<3>(formatting);
     std::string &strUnderline = std::get<4>(formatting);
 
-    painter.TextState.SetFont(*pFontNormal, 12);
-    painter.DrawTextMultiLine(
-        strNormal, left_margin, bottom_margin, width, (print_height - 12 * line), drawParams
+    painter.SetFont(pFontNormal);
+
+    painter.DrawMultiLineText(
+        left_margin,
+        bottom_margin,
+        width,
+        print_height - 12 * line,
+        PoDoFo::PdfString((const PoDoFo::pdf_utf8 *)strNormal.c_str()),
+        eAlignment,
+        PoDoFo::ePdfVerticalAlignment_Top
     );
 
-    painter.DrawTextMultiLine(
-        strUnderline, left_margin, bottom_margin, width, (print_height - 12 * line), drawParams
+    painter.DrawMultiLineText(
+        left_margin,
+        bottom_margin,
+        width,
+        print_height - 12 * line,
+        PoDoFo::PdfString((const PoDoFo::pdf_utf8 *)strUnderline.c_str()),
+        eAlignment,
+        PoDoFo::ePdfVerticalAlignment_Top
     );
 
-    painter.TextState.SetFont(*pFontBold, 12);
-    painter.DrawTextMultiLine(
-        strBold, left_margin, bottom_margin, width, (print_height - 12 * line), drawParams
+    painter.SetFont(pFontBold);
+    painter.DrawMultiLineText(
+        left_margin,
+        bottom_margin,
+        width,
+        print_height - 12 * line,
+        PoDoFo::PdfString((const PoDoFo::pdf_utf8 *)strBold.c_str()),
+        eAlignment,
+        PoDoFo::ePdfVerticalAlignment_Top
     );
 
-    painter.TextState.SetFont(*pFontItalic, 12);
-    painter.DrawTextMultiLine(
-        strItalic, left_margin, bottom_margin, width, (print_height - 12 * line), drawParams
+    painter.SetFont(pFontItalic);
+    painter.DrawMultiLineText(
+        left_margin,
+        bottom_margin,
+        width,
+        print_height - 12 * line,
+        PoDoFo::PdfString((const PoDoFo::pdf_utf8 *)strItalic.c_str()),
+        eAlignment,
+        PoDoFo::ePdfVerticalAlignment_Top
     );
 
-    painter.TextState.SetFont(*pFontBoldItalic, 12);
-    painter.DrawTextMultiLine(
-        strBoldItalic, left_margin, bottom_margin, width, (print_height - 12 * line), drawParams
+    painter.SetFont(pFontBoldItalic);
+    painter.DrawMultiLineText(
+        left_margin,
+        bottom_margin,
+        width,
+        print_height - 12 * line,
+        PoDoFo::PdfString((const PoDoFo::pdf_utf8 *)strBoldItalic.c_str()),
+        eAlignment,
+        PoDoFo::ePdfVerticalAlignment_Top
     );
 
     ++line;
@@ -426,20 +449,22 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
   const int gap_transition = 13;
   const int gap_sceneheader = 11;
 
-  // PDF document
-  // PoDoFo::PdfStreamedDocument pdf_document(fn);
-  PoDoFo::PdfMemDocument pdf_document;
+  // Set up PDF document
+  PoDoFo::PdfStreamedDocument document(fn.c_str());
 
-  // PDF page size
-  PoDoFo::Rect pdf_size = PoDoFo::PdfPage::CreateStandardPageSize(PoDoFo::PdfPageSize::Letter);
-  PoDoFo::PdfPage *pdf_page = &pdf_document.GetPages().CreatePage(pdf_size);
+  PoDoFo::PdfPage *pPage =
+      document.CreatePage(PoDoFo::PdfPage::CreateStandardPageSize(PoDoFo::ePdfPageSize_Letter));
 
-  // PDF font
-  PoDoFo::PdfFont *pdf_font = pdf_document.GetFonts().SearchFont("Courier Prime");
+  if (!pPage) {
+    PODOFO_RAISE_ERROR(PoDoFo::ePdfError_InvalidHandle);
+  }
 
-  PoDoFo::PdfPainter pdf_painter;
-  pdf_painter.SetCanvas(*pdf_page);
-  pdf_painter.TextState.SetFont(*pdf_font, 12);
+  PoDoFo::PdfPainter painter;
+  painter.SetPage(pPage);
+
+  PoDoFo::PdfFont *pFontNormal = document.CreateFont(PODOFO_HPDF_FONT_COURIER);
+  pFontNormal->SetFontSize(12.0);
+  painter.SetFont(pFontNormal);
 
   // process script
   Fountain::Script script(input);
@@ -457,8 +482,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
 
     int line = 18 - pdfTextLines(strText, width_dialog).size();
     pdfTextAdd(
-        pdf_document,
-        pdf_painter,
+        document,
+        painter,
         "<u>" + to_upper(strText) + "</u>",
         "normal",
         line,
@@ -466,7 +491,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
         72,
         72,
         648,
-        PoDoFo::PdfHorizontalAlignment::Center
+        PoDoFo::ePdfAlignment_Center
     );
     line += pdfTextLines(strText, width_dialog).size() + 4;
 
@@ -475,8 +500,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
         strText = to_lower(script.metadata["credit"]);
         decode_entities_inplace(strText);
         pdfTextAdd(
-            pdf_document,
-            pdf_painter,
+            document,
+            painter,
             strText,
             "normal",
             line,
@@ -484,14 +509,14 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
             72,
             72,
             648,
-            PoDoFo::PdfHorizontalAlignment::Center
+            PoDoFo::ePdfAlignment_Center
         );
         line += pdfTextLines(strText, width_dialog).size() + 1;
       } else {
         strText = "Written by";
         pdfTextAdd(
-            pdf_document,
-            pdf_painter,
+            document,
+            painter,
             strText,
             "normal",
             line,
@@ -499,7 +524,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
             72,
             72,
             648,
-            PoDoFo::PdfHorizontalAlignment::Center
+            PoDoFo::ePdfAlignment_Center
         );
         line += 2;
       }
@@ -507,8 +532,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
       strText = script.metadata["author"];
       decode_entities_inplace(strText);
       pdfTextAdd(
-          pdf_document,
-          pdf_painter,
+          document,
+          painter,
           strText,
           "normal",
           line,
@@ -516,7 +541,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
           72,
           72,
           648,
-          PoDoFo::PdfHorizontalAlignment::Center
+          PoDoFo::ePdfAlignment_Center
       );
       line += pdfTextLines(strText, width_dialog).size() + 4;
     }
@@ -525,8 +550,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
       strText = script.metadata["source"];
       decode_entities_inplace(strText);
       pdfTextAdd(
-          pdf_document,
-          pdf_painter,
+          document,
+          painter,
           strText,
           "normal",
           line,
@@ -534,7 +559,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
           72,
           72,
           648,
-          PoDoFo::PdfHorizontalAlignment::Center
+          PoDoFo::ePdfAlignment_Center
       );
       line += pdfTextLines(strText, width_dialog).size() + 1;
     }
@@ -546,8 +571,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
       int text_lines = pdfTextLines(strText, width_dialog).size();
       line = text_lines < 3 ? 51 : 54 - text_lines;
       pdfTextAdd(
-          pdf_document,
-          pdf_painter,
+          document,
+          painter,
           strText,
           "normal",
           line,
@@ -555,7 +580,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
           72,
           72,
           648,
-          PoDoFo::PdfHorizontalAlignment::Left
+          PoDoFo::ePdfAlignment_Left
       );
     } else if (!script.metadata["copyright"].empty()) {
       strText = "Copyright " + script.metadata["copyright"];
@@ -565,8 +590,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
       int text_lines = pdfTextLines(strText, width_dialog).size();
       line = text_lines < 3 ? 51 : 54 - text_lines;
       pdfTextAdd(
-          pdf_document,
-          pdf_painter,
+          document,
+          painter,
           strText,
           "normal",
           line,
@@ -574,7 +599,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
           72,
           72,
           648,
-          PoDoFo::PdfHorizontalAlignment::Left
+          PoDoFo::ePdfAlignment_Left
       );
     }
 
@@ -585,8 +610,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
       int text_lines = pdfTextLines(strText, width_dialog).size();
       line -= (text_lines + 2);
       pdfTextAdd(
-          pdf_document,
-          pdf_painter,
+          document,
+          painter,
           strText,
           "normal",
           line,
@@ -594,13 +619,18 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
           72,
           72,
           648,
-          PoDoFo::PdfHorizontalAlignment::Right
+          PoDoFo::ePdfAlignment_Right
       );
     }
 
-    pdf_painter.FinishDrawing();
-    pdf_page = &pdf_document.GetPages().CreatePage(pdf_size);
-    pdf_painter.SetCanvas(*pdf_page);
+    painter.FinishPage();
+    pPage = document.CreatePage(
+        PoDoFo::PdfPage::CreateStandardPageSize(PoDoFo::ePdfPageSize_Letter)
+    );
+    if (!pPage) {
+      PODOFO_RAISE_ERROR(PoDoFo::ePdfError_InvalidHandle);
+    }
+    painter.SetPage(pPage);
   }
 
   static int dialog_state = 0;
@@ -635,8 +665,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
           int textLines = pdfTextLines(outputDialog, width_dialog).size();
           if (LineNumber + textLines <= lines_per_page) {
             pdfTextAdd(
-                pdf_document,
-                pdf_painter,
+                document,
+                painter,
                 outputDialog,
                 "normal",
                 LineNumber,
@@ -657,8 +687,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
           int textLines = std::max<int>(textLines_left, textLines_right);
           if (LineNumber + textLines <= lines_per_page) {
             pdfTextAdd(
-                pdf_document,
-                pdf_painter,
+                document,
+                painter,
                 outputDialogRight,
                 "normal",
                 LineNumber,
@@ -666,8 +696,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
                 margin_dialog_right
             );
             pdfTextAdd(
-                pdf_document,
-                pdf_painter,
+                document,
+                painter,
                 outputDialogLeft,
                 "normal",
                 LineNumber,
@@ -697,7 +727,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
         // TODO: Add scene numbers?
         int textLines = pdfTextLines(buffer).size();
         if (LineNumber + gap_sceneheader <= lines_per_page) {
-          pdfTextAdd(pdf_document, pdf_painter, buffer, "sceneheader", LineNumber);
+          pdfTextAdd(document, painter, buffer, "sceneheader", LineNumber);
           LineNumber += textLines;
         } else {
           LineNumber += gap_sceneheader;
@@ -710,7 +740,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
         }
         int textLines = pdfTextLines(buffer).size();
         if (LineNumber + textLines <= lines_per_page) {
-          pdfTextAdd(pdf_document, pdf_painter, buffer, "normal", LineNumber);
+          pdfTextAdd(document, painter, buffer, "normal", LineNumber);
           LineNumber += textLines;
         } else {
           LineNumber += textLines;
@@ -725,7 +755,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
 
         int textLines = pdfTextLines(buffer).size();
         if (LineNumber + textLines <= lines_per_page) {
-          pdfTextAdd(pdf_document, pdf_painter, buffer, "normal", LineNumber);
+          pdfTextAdd(document, painter, buffer, "normal", LineNumber);
           LineNumber += textLines;
         } else {
           LineNumber += textLines;
@@ -740,7 +770,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
 
         int textLines = pdfTextLines(buffer).size();
         if (LineNumber + gap_transition <= lines_per_page) {
-          pdfTextAdd(pdf_document, pdf_painter, buffer, "normal", LineNumber);
+          pdfTextAdd(document, painter, buffer, "normal", LineNumber);
           LineNumber += textLines;
         } else {
           LineNumber += gap_transition;
@@ -821,7 +851,7 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
         } else {
           int textLines = pdfTextLines(buffer).size();
           if (LineNumber + textLines <= lines_per_page) {
-            pdfTextAdd(pdf_document, pdf_painter, buffer, "lyric", LineNumber);
+            pdfTextAdd(document, painter, buffer, "lyric", LineNumber);
             LineNumber += textLines;
           } else {
             LineNumber += textLines;
@@ -858,30 +888,28 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
 
     // Add new page
     if (LineNumber >= lines_per_page) {
-      pdf_painter.FinishDrawing();
+      painter.FinishPage();
       LineNumber = 0;
-
-      pdf_page = &pdf_document.GetPages().CreatePage(pdf_size);
-      pdf_painter.SetCanvas(*pdf_page);
+      pPage = document.CreatePage(
+          PoDoFo::PdfPage::CreateStandardPageSize(PoDoFo::ePdfPageSize_Letter)
+      );
+      if (!pPage) {
+        PODOFO_RAISE_ERROR(PoDoFo::ePdfError_InvalidHandle);
+      }
+      painter.SetPage(pPage);
       ++PageNumber;
 
       // Add page number
       std::string PageNumberText = std::to_string(PageNumber);
       PageNumberText = std::string(line_char_length - PageNumberText.length() - 1, ' ') +
                        PageNumberText + '.';
-      pdfTextAdd(pdf_document, pdf_painter, PageNumberText, "normal", -3);
+      pdfTextAdd(document, painter, PageNumberText, "normal", -3);
 
       // Add overflow from previous page
       if (dialog_state == 1 && !outputDialog.empty()) {
         int textLines = pdfTextLines(outputDialog, width_dialog).size();
         pdfTextAdd(
-            pdf_document,
-            pdf_painter,
-            outputDialog,
-            "normal",
-            LineNumber,
-            width_dialog,
-            margin_dialog
+            document, painter, outputDialog, "normal", LineNumber, width_dialog, margin_dialog
         );
         outputDialog.clear();
         dialog_state = 0;
@@ -895,8 +923,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
         int textLines = std::max<int>(textLines_left, textLines_right);
 
         pdfTextAdd(
-            pdf_document,
-            pdf_painter,
+            document,
+            painter,
             outputDialogLeft,
             "normal",
             LineNumber,
@@ -904,8 +932,8 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
             margin_dialog_left
         );
         pdfTextAdd(
-            pdf_document,
-            pdf_painter,
+            document,
+            painter,
             outputDialogRight,
             "normal",
             LineNumber,
@@ -919,12 +947,12 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
       } else if (!output.empty()) {
         if (node.type == ScriptNodeType::ftnSceneHeader) {
           int textLines = pdfTextLines(output).size();
-          pdfTextAdd(pdf_document, pdf_painter, output, "sceneheader", LineNumber);
+          pdfTextAdd(document, painter, output, "sceneheader", LineNumber);
           output.clear();
           LineNumber += textLines;
         } else {
           int textLines = pdfTextLines(output).size();
-          pdfTextAdd(pdf_document, pdf_painter, output, "normal", LineNumber);
+          pdfTextAdd(document, painter, output, "normal", LineNumber);
           output.clear();
           LineNumber += textLines;
         }
@@ -932,19 +960,18 @@ bool ftn2pdf(const std::string &fn, const std::string &input) {
     }
   }
 
-  pdf_painter.FinishDrawing();
-
-  pdf_document.GetMetadata().SetCreator(PoDoFo::PdfString("Geany Preview Plugin"));
+  painter.FinishPage();
+  document.GetInfo()->SetCreator("Geany Preview Plugin");
 
   if (!script.metadata["author"].empty()) {
-    pdf_document.GetMetadata().SetAuthor(PoDoFo::PdfString(script.metadata["author"]));
+    document.GetInfo()->SetAuthor(script.metadata["author"]);
   }
 
   if (!script.metadata["title"].empty()) {
-    pdf_document.GetMetadata().SetTitle(PoDoFo::PdfString(script.metadata["title"]));
+    document.GetInfo()->SetTitle(script.metadata["title"]);
   }
 
-  pdf_document.Save(fn);
+  document.Close();
   return true;
 }
 

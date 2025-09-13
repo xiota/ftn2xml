@@ -1,17 +1,24 @@
-/*
- * SPDX-FileCopyrightText: Copyright 2021-2024 xiota
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
-
-#include <stdio.h>
+// SPDX-FileCopyrightText: Copyright 2021-2025 xiota
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <CLI/CLI.hpp>
-#include <fstream>
+#include <iostream>
+#include <map>
 #include <string>
+#include <string_view>
 
-#include "auxiliary.h"
 #include "config.h"
-#include "fountain.h"
+#include "renderers_fdx.h"
+#include "renderers_html.h"
+#include "renderers_screenplain.h"
+#include "renderers_textplay.h"
+#include "renderers_xml.h"
+#include "utils_file.h"
+#include "utils_string.h"
+
+#if ENABLE_EXPORT_PDF
+#  include "renderers_pdf.h"
+#endif
 
 int main(int argc, char **argv) {
   auto cmd = std::string{ argv[0] };
@@ -48,8 +55,8 @@ int main(int argc, char **argv) {
   type = "xml";  // default
   for (const auto &[key, val] : css_list) {
     if (cmd.find(key) != std::string::npos) {
-      type = key;
-      css_fn = val;
+      type = std::string(key);
+      css_fn = std::string(val);
       break;
     }
   }
@@ -93,6 +100,7 @@ int main(int argc, char **argv) {
   if (list_types) {
     std::cout << "output types:" << std::endl;
     for (const auto &[key, val] : css_list) {
+      (void)val;
       std::cout << "   " << key << std::endl;
     }
     return 0;
