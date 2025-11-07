@@ -6,13 +6,21 @@ project(
   default_options: ['buildtype=release', 'prefix=/usr']
 )
 
-# Safety net
-if not get_option('cli') and not get_option('install_lib')
+opt_cli = get_option('cli')
+opt_install_lib = get_option('install_lib')
+opt_install_docs = get_option('install_docs')
+
+if meson.is_subproject()
+  message('Building as subproject — disabling CLI, library, and docs')
+  opt_cli = false
+  opt_install_lib = false
+  opt_install_docs = false
+elif not opt_cli and not opt_install_lib
   error('Both cli=false and install_lib=false — nothing to build or install.')
 endif
 
 podofo = dependency('libpodofo', required: get_option('pdf_export'))
-cli11_dep = dependency('CLI11', required: get_option('cli'))
+cli11_dep = dependency('CLI11', required: opt_cli)
 
 conf_data = configuration_data()
 conf_data.set('version', meson.project_version())
@@ -48,11 +56,18 @@ fountain_lib = static_library(
   meson.project_name(),
   core_sources,
   dependencies: [podofo],
-  install: get_option('install_lib')
+  install: opt_install_lib
+)
+
+# Export dependency object for subproject use
+ftn2xml_dep = declare_dependency(
+  link_with: fountain_lib,
+  include_directories: include_directories('source'),
+  dependencies: [podofo]
 )
 
 # Install headers + pkg-config if requested
-if get_option('install_lib')
+if opt_install_lib
   install_headers(
     'source/utils_file.h',
     'source/utils_string.h',
@@ -79,7 +94,7 @@ if get_option('install_lib')
 endif
 
 # CLI executable
-if get_option('cli')
+if opt_cli
   exe = executable(
     meson.project_name(),
     sources: ['source/main.cc'],
@@ -105,7 +120,7 @@ if get_option('cli')
 endif
 
 # Docs behind option
-if get_option('install_docs')
+if opt_install_docs
   install_data(
     ['Fountain_Syntax.md', 'Readme.md'],
     install_dir: get_option('datadir') / 'doc' / meson.project_name()
