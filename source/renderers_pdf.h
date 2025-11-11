@@ -8,7 +8,7 @@ namespace Fountain {
 
 // Generate a PDF from Fountain input and write it to fn.
 // Returns true on success, false on failure.
-// Only compiled if ENABLE_EXPORT_PDF is set in config.h.
+// Only compiled if HAVE_PODOFO is defined.
 bool ftn2pdf(const std::string &fn, const std::string &input);
 
 }  // namespace Fountain

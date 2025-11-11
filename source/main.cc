@@ -16,7 +16,7 @@
 #include "utils_file.h"
 #include "utils_string.h"
 
-#if ENABLE_EXPORT_PDF
+#ifdef HAVE_PODOFO
 #  include "renderers_pdf.h"
 #endif
 
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
   std::string type;
   std::string css_fn;
   std::map<std::string_view, std::string_view> css_list{
-#if ENABLE_EXPORT_PDF
+#ifdef HAVE_PODOFO
     { "pdf", "" },
 #endif
     { "html", "fountain-html.css" },
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
 
   // execute desired action
   std::string output;
-#if ENABLE_EXPORT_PDF
+#ifdef HAVE_PODOFO
   if (type == "pdf") {
     Fountain::ftn2pdf(output_file, input);
     return 0;

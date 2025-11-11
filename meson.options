@@ -16,7 +16,7 @@ option('install_docs',
   description: 'Install documentation files'
 )
 
-option('pdf_export',
+option('podofo',
   type: 'feature',
   value: 'auto',
   description: 'Enable PDF export via libpodofo'

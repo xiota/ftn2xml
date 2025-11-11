@@ -4,7 +4,7 @@
 #include "renderers_pdf.h"
 #include "config.h"
 
-#if ENABLE_EXPORT_PDF
+#ifdef HAVE_PODOFO
 
 #  include <algorithm>
 #  include <cstddef>
@@ -25,4 +25,4 @@
 #    include "renderers_pdf_0.10.inc"
 #  endif
 
-#endif  // ENABLE_EXPORT_PDF
+#endif  // HAVE_PODOFO

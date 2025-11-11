@@ -19,13 +19,17 @@ elif not opt_cli and not opt_install_lib
   error('Both cli=false and install_lib=false — nothing to build or install.')
 endif
 
-podofo = dependency('libpodofo', required: get_option('pdf_export'))
 cli11_dep = dependency('CLI11', required: opt_cli)
+
+podofo_dep = dependency('libpodofo', required: get_option('podofo'))
+if podofo_dep.found()
+  core_sources = [ 'source/renderers_pdf.cc' ]
+  add_project_arguments('-DHAVE_PODOFO', language: 'cpp')
+endif
 
 conf_data = configuration_data()
 conf_data.set('version', meson.project_version())
 conf_data.set('project_datadir', get_option('datadir') / meson.project_name())
-conf_data.set10('pdf_export', podofo.found())
 
 config_h = configure_file(
   input: 'config.h.in',
@@ -34,7 +38,7 @@ config_h = configure_file(
 )
 
 # Core sources (modular layout)
-core_sources = [
+core_sources += [
   config_h,
   'source/utils_file.cc',
   'source/utils_string.cc',
@@ -47,15 +51,11 @@ core_sources = [
   'source/renderers_xml.cc',
 ]
 
-if get_option('pdf_export').enabled()
-  core_sources += 'source/renderers_pdf.cc'
-endif
-
 # Static library
 fountain_lib = static_library(
   meson.project_name(),
   core_sources,
-  dependencies: [podofo],
+  dependencies: [podofo_dep],
   install: opt_install_lib
 )
 
@@ -63,7 +63,7 @@ fountain_lib = static_library(
 ftn2xml_dep = declare_dependency(
   link_with: fountain_lib,
   include_directories: include_directories('source'),
-  dependencies: [podofo]
+  dependencies: [podofo_dep]
 )
 
 # Install headers + pkg-config if requested
@@ -89,7 +89,7 @@ if opt_install_lib
     version: meson.project_version(),
     libraries: fountain_lib,
     subdirs: meson.project_name(),
-    requires_private: podofo.found() ? ['libpodofo'] : []
+    requires_private: podofo_dep.found() ? ['libpodofo'] : []
   )
 endif
 
@@ -98,7 +98,7 @@ if opt_cli
   exe = executable(
     meson.project_name(),
     sources: ['source/main.cc'],
-    dependencies: [cli11_dep, podofo],
+    dependencies: [cli11_dep, podofo_dep],
     link_with: fountain_lib,
     install: true
   )
