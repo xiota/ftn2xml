@@ -49,20 +49,18 @@ More details are contained in the `--help` output.
 
 ## Building
 
-This project uses `meson` build scripts with a `make` wrapper for convenience.
+This project uses Meson build scripts.
 
 ```bash
 git clone https://github.com/xiota/ftn2xml.git
-cd ftn2xml
-make
+meson setup build ftn2xml
+meson compile -C build
 ```
 
-# Installing
-
-The makefile contains an install target.
+Then to install:
 
 ```bash
-make install
+meson install -C build
 ```
 
 To uninstall, delete the files and folders listed in `build/meson-logs/install-log.txt`.
