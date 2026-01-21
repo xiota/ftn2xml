@@ -78,7 +78,7 @@ if opt_install_lib
     'source/renderers_screenplain.h',
     'source/renderers_textplay.h',
     'source/renderers_xml.h',
-    get_option('pdf_export').enabled() ? 'source/renderers_pdf.h' : [],
+    get_option('podofo').enabled() ? 'source/renderers_pdf.h' : [],
     subdir: meson.project_name()
   )
 
@@ -107,7 +107,7 @@ if opt_cli
     foreach alias : ['ftn2fdx', 'ftn2html']
       install_symlink(alias, install_dir: get_option('bindir'), pointing_to: meson.project_name())
     endforeach
-    if get_option('pdf_export').enabled()
+    if get_option('podofo').enabled()
       install_symlink('ftn2pdf', install_dir: get_option('bindir'), pointing_to: meson.project_name())
     endif
   endif
